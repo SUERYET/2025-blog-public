@@ -1,11 +1,11 @@
 {
 	"meta": {
-		"title": "YYsuni",
-		"description": "YYsuni 的个人博客，记录前端开发、探索、笔记。前端 UI 更新代码仓库。",
-		"username": "Suni"
+		"title": "SUERYETO's Blog",
+		"description": "SUERYETO 的个人博客，记录开发、探索、笔记。",
+		"username": "SUERYETO"
 	},
 	"theme": {
-		"colorBrand": "#35bfab",
+		"colorBrand": "#35adbf",
 		"colorPrimary": "#334f52",
 		"colorSecondary": "#7b888e",
 		"colorBrandSecondary": "#1fc9e7",
@@ -19,7 +19,7 @@
 		"#9EE7D1",
 		"#84D68A",
 		"#EDDD62",
-		"#88E6E5",
+		"#88e6e5",
 		"#a7f3d0"
 	],
 	"artImages": [
@@ -38,6 +38,10 @@
 		{
 			"id": "65ce15c09e69bd71",
 			"url": "/images/art/65ce15c09e69bd71.jpg"
+		},
+		{
+			"id": "1e2d5d3b4e6f35e8",
+			"url": "/images/art/1e2d5d3b4e6f35e8.jpg"
 		}
 	],
 	"currentArtImageId": "65ce15c09e69bd71",
