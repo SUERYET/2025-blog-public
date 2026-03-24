@@ -265,5 +265,12 @@
 		"url": "https://blog.dumogu.top/",
 		"description": "前端开发，页面小巧，结构简单，寻常记录",
 		"stars": 3
+	},
+	{
+		"name": "Amis",
+		"avatar": "https://amisblog.cn/images/avatar.png",
+		"url": "https://amisblog.cn/",
+		"description": "Amis",
+		"stars": 5
 	}
 ]
