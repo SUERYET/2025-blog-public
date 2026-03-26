@@ -1,5 +1,18 @@
 [
   {
+    "slug": "dif-array",
+    "title": "差分数组",
+    "tags": [
+      "算法",
+      "Java"
+    ],
+    "date": "2026-03-27T01:05",
+    "summary": "差分数组的介绍与用法",
+    "cover": "/blogs/dif-array/4d9a7c3b7fd72803.png",
+    "hidden": false,
+    "category": "Java算法"
+  },
+  {
     "slug": "prefix-sum",
     "title": "前缀和数组",
     "tags": [
