@@ -1,6 +1,6 @@
 前几天刷到一道比较有代表性的题目,通过读取字符串来实现时间的计算,故就此总结一下这道题的基本思路和重点语法.
 ## 题目链接与答案
-[洛谷P8665<蓝桥杯 2018 省 A> 航班时间](https://www.luogu.com.cn/problem/P8665)
+[洛谷P8665<蓝桥杯 2018 省 A> 航班时间](https://www.luogu.com.cn/problem/P8665)  
 我提交的答案:
 ```java
 package Imitate.P8665;  
