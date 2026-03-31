@@ -1,0 +1,13 @@
+{
+  "title": "从一道经典的N皇后问题入门DFS算法",
+  "tags": [
+    "Java",
+    "DFS",
+    "leetcode"
+  ],
+  "date": "2026-04-01T00:30",
+  "summary": "正在入门DFS,简单写一下自己的想法",
+  "cover": "https://images.sueryeto.cn/images/20260401003153071.webp",
+  "hidden": false,
+  "category": "Java算法"
+}
