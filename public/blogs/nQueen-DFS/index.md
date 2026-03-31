@@ -1,4 +1,3 @@
-# 从一道经典的N皇后问题入门DFS算法
 参考视频:[【DFS保姆级教程：从入门到剪枝优化，从暴力到优雅】 ](https://www.bilibili.com/video/BV14xNbzdEMs/?share_source=copy_web&vd_source=7f1438cf032aed06c8172a6ad76ad12a)
 ## N皇后题目介绍
 leetcode链接[51. N 皇后](https://leetcode.cn/problems/n-queens/)  
