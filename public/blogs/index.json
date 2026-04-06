@@ -1,5 +1,19 @@
 [
   {
+    "slug": "DFS-violence",
+    "title": "蓝桥杯 DFS 暴力骗分万能套路",
+    "tags": [
+      "DFS",
+      "暴力",
+      "蓝桥杯"
+    ],
+    "date": "2026-04-07T00:14",
+    "summary": "DFS暴力骗分的方法(AI生成)",
+    "cover": "https://images.sueryeto.cn/images/20260407001643660.webp",
+    "hidden": false,
+    "category": "学习"
+  },
+  {
     "slug": "DFS-percom",
     "title": "用DFS解决排列、组合问题的核心思路（Java版）",
     "tags": [
