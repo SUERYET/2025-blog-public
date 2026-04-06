@@ -65,7 +65,7 @@ BFS 必须用 **队列（Queue）**，先进先出（FIFO）
 
 ### 模板：迷宫最短路径（最常考）
 
-```Java
+```java
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -158,7 +158,7 @@ public class BFS模板 {
 
 **极简连通块模板（改2行就行）**
 
-```Java
+```java
 // 核心代码
 int ans = 0;
 for (int i = 0; i < n; i++) {
