@@ -66,13 +66,17 @@ BFS 必须用 **队列（Queue）**，先进先出（FIFO）
 ### 模板：迷宫最短路径（最常考）
 
 ```java
+// 导入需要的工具类
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
-// 用类存储坐标+步数
+// 自定义节点类：用来存储 坐标(x,y) + 走到这里的步数(step)
 class Node {
-    int x, y, step;
+    int x, y;   // x：行坐标，y：列坐标
+    int step;   // 从起点走到当前位置的步数
+
+    // 构造方法：创建节点时，直接传入坐标和步数
     public Node(int x, int y, int step) {
         this.x = x;
         this.y = y;
@@ -80,46 +84,72 @@ class Node {
     }
 }
 
+// 主类：BFS迷宫最短路径模板
 public class BFS模板 {
-    // 上下左右四个方向
+    // 方向数组：表示 上下左右 四个移动方向
+    // {-1,0}上，{1,0}下，{0,-1}左，{0,1}右
     static int[][] dir = {{-1,0},{1,0},{0,-1},{0,1}};
-    static int n, m;
-    static char[][] map; // 迷宫地图
-    static boolean[][] vis; // 访问标记
+    
+    static int n, m;         // n：迷宫行数，m：迷宫列数
+    static char[][] map;     // 存储迷宫地图
+    static boolean[][] vis;  // 访问标记数组：标记某个位置是否走过（避免重复走、死循环）
 
     public static void main(String[] args) {
+        // 1. 输入读取
         Scanner sc = new Scanner(System.in);
-        n = sc.nextInt(); // 行数
-        m = sc.nextInt(); // 列数
+        n = sc.nextInt(); // 读取迷宫行数
+        m = sc.nextInt(); // 读取迷宫列数
+
+        // 初始化地图和访问数组
         map = new char[n][m];
         vis = new boolean[n][m];
 
-        // 读入地图
+        // 2. 读取迷宫地图
+        // 循环n行，把每一行字符串转成字符数组存入map
         for (int i = 0; i < n; i++) {
             map[i] = sc.next().toCharArray();
         }
 
-        // BFS
+        // 3. BFS 核心代码开始
+        // 创建队列：BFS必须用队列（先进先出），保证一层层搜索，找到的一定是最短路径
         Queue<Node> q = new LinkedList<>();
-        q.add(new Node(0, 0, 0)); // 起点(0,0)，步数0
+        
+        // 起点入队：默认从左上角 (0,0) 出发，初始步数 0
+        q.add(new Node(0, 0, 0));
+        // 标记起点已访问
         vis[0][0] = true;
 
+        // 循环：队列不为空就继续搜索
         while (!q.isEmpty()) {
-            Node now = q.poll(); // 取出队头
+            // 取出队首节点（当前正在遍历的位置）
+            Node now = q.poll(); 
 
-            // 到达终点，输出最短步数
+            // ------------------- 终止条件 -------------------
+            // 如果当前位置 == 终点（右下角 n-1, m-1）
+            // 直接输出步数，结束程序（BFS第一次到达终点就是最短路径）
             if (now.x == n-1 && now.y == m-1) {
                 System.out.println(now.step);
                 return;
             }
 
-            // 遍历四个方向
+            // ------------------- 遍历四个方向 -------------------
+            // 循环上下左右四个方向
             for (int[] d : dir) {
+                // 计算新坐标：当前坐标 + 方向偏移量
                 int nx = now.x + d[0];
                 int ny = now.y + d[1];
-                // 判断：不越界 + 未访问 + 可走（不是墙）
+
+                // ------------------- 合法性判断 -------------------
+                // 必须同时满足4个条件，才能走这个新位置
+                // 1. nx >= 0 && nx < n ：新坐标不越出地图上边界和下边界
+                // 2. ny >= 0 && ny < m ：新坐标不越出地图左边界和右边界
+                // 3. !vis[nx][ny]       ：这个位置没有访问过
+                // 4. map[nx][ny] == '.' ：这个位置是路（不是墙，墙一般用 # 表示）
                 if (nx >=0 && nx <n && ny >=0 && ny <m && !vis[nx][ny] && map[nx][ny] == '.') {
+                    
+                    // 标记为已访问
                     vis[nx][ny] = true;
+                    // 新位置入队，步数 = 当前步数 + 1
                     q.add(new Node(nx, ny, now.step + 1));
                 }
             }
