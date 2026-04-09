@@ -1,14 +1,5 @@
 [
   {
-    "slug": "suep-joke1",
-    "title": "上电笑话一则",
-    "tags": [],
-    "date": "2026-04-09T17:16",
-    "summary": "参考文献:https://tieba.baidu.com/p/10623988012?share=9105&fr=sharewise&see_lz=0&share_from=post&sfc=copy&client_type=2&client_version=22.2.1.1&st=1775710067&is_video=false&unique=89B169002FD093AB22C9DBCA535EBC7C",
-    "hidden": false,
-    "category": ""
-  },
-  {
     "slug": "lanqiao-bfs",
     "title": "BFS 广度优先搜索（蓝桥杯 Java B 组 冲刺版）",
     "tags": [
