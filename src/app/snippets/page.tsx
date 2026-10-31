@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { motion } from 'motion/react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Plus, X } from 'lucide-react'
 import { DialogModal } from '@/components/dialog-modal'
-import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
+import { EditToolbar } from '@/components/edit-toolbar'
+import { Button } from '@/components/ui/button'
 import initialList from './list.json'
 import { pushSnippets } from './services/push-snippets'
 
@@ -21,9 +21,7 @@ export default function Page() {
 	const [isManageOpen, setIsManageOpen] = useState(false)
 	const [draftSnippets, setDraftSnippets] = useState<string[]>([])
 	const [newSnippet, setNewSnippet] = useState('')
-	const keyInputRef = useRef<HTMLInputElement>(null)
 
-	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
 	const hideEditButton = siteContent.hideEditButton ?? false
 
@@ -56,28 +54,9 @@ export default function Page() {
 		}
 	}
 
-	const handleSaveClick = () => {
-		if (!isAuth) {
-			keyInputRef.current?.click()
-		} else {
-			void handleSave()
-		}
-	}
-
 	const handleCancel = () => {
 		setSnippets(originalSnippets)
 		setIsEditMode(false)
-	}
-
-	const handleChoosePrivateKey = async (file: File) => {
-		try {
-			const text = await file.text()
-			await setPrivateKey(text)
-			await handleSave()
-		} catch (error) {
-			console.error('Failed to read private key:', error)
-			toast.error('读取密钥文件失败')
-		}
 	}
 
 	const openManageDialog = () => {
@@ -117,62 +96,27 @@ export default function Page() {
 		setNewSnippet('')
 	}
 
-	const buttonText = isAuth ? '保存' : '导入密钥'
-
 	return (
 		<>
-			<input
-				ref={keyInputRef}
-				type='file'
-				accept='.pem'
-				className='hidden'
-				onChange={async e => {
-					const file = e.target.files?.[0]
-					if (file) await handleChoosePrivateKey(file)
-					if (e.currentTarget) e.currentTarget.value = ''
-				}}
-			/>
-
 			<div className='flex min-h-[70vh] flex-col items-center justify-center px-6 py-24'>
 				<div className='w-full max-w-3xl text-center'>
 					<p className='text-2xl leading-relaxed font-semibold'>{currentSnippet || '无'}</p>
 				</div>
 			</div>
 
-			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className='absolute top-4 right-6 flex gap-3 max-sm:hidden'>
-				{isEditMode ? (
-					<>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={handleCancel}
-							disabled={isSaving}
-							className='rounded-xl border bg-white/60 px-6 py-2 text-sm'>
-							取消
-						</motion.button>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={openManageDialog}
-							className='rounded-xl border bg-white/60 px-6 py-2 text-sm'>
-							管理
-						</motion.button>
-						<motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleSaveClick} disabled={isSaving} className='brand-btn px-6'>
-							{isSaving ? '保存中...' : buttonText}
-						</motion.button>
-					</>
-				) : (
-					!hideEditButton && (
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={() => setIsEditMode(true)}
-							className='bg-card rounded-xl border px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80'>
-							编辑
-						</motion.button>
-					)
-				)}
-			</motion.div>
+			<EditToolbar
+				editing={isEditMode}
+				saving={isSaving}
+				hideEditButton={hideEditButton}
+				onEdit={() => setIsEditMode(true)}
+				onCancel={handleCancel}
+				onSave={handleSave}
+				extra={
+					<Button size='sm' onClick={openManageDialog}>
+						管理
+					</Button>
+				}
+			/>
 
 			<DialogModal open={isManageOpen} onClose={cancelManageChanges} className='card static w-[520px] max-sm:w-full'>
 				<div className='space-y-4'>
@@ -182,7 +126,7 @@ export default function Page() {
 							value={newSnippet}
 							onChange={e => setNewSnippet(e.target.value)}
 							placeholder='新增'
-							className='flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none'
+							className='flex-1 rounded-lg border border-hair bg-surface2 px-3 py-2 text-sm focus:outline-none'
 						/>
 						<button onClick={handleAddDraft} className='brand-btn flex items-center gap-1 px-4 py-2 text-sm'>
 							<Plus className='h-4 w-4' />
@@ -194,8 +138,8 @@ export default function Page() {
 						{draftSnippets.length === 0 && <p className='text-secondary py-6 text-center text-sm'>暂无内容</p>}
 						{draftSnippets.map((item, index) => (
 							<div key={`${item}-${index}`} className='group flex items-start gap-3 rounded-lg px-3 py-2 text-sm'>
-								<p className='flex-1 leading-relaxed text-gray-800'>{item}</p>
-								<button onClick={() => handleRemoveDraft(index)} className='text-gray-400 transition-colors hover:text-red-500'>
+								<p className='flex-1 leading-relaxed text-ink'>{item}</p>
+								<button onClick={() => handleRemoveDraft(index)} className='text-faint transition-colors hover:text-red-500'>
 									<X className='h-4 w-4' />
 								</button>
 							</div>
@@ -205,7 +149,7 @@ export default function Page() {
 					<div className='mt-4 flex gap-3'>
 						<button
 							onClick={cancelManageChanges}
-							className='flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm transition-colors hover:bg-gray-50'>
+							className='flex-1 rounded-lg border border-hair2 bg-surface px-4 py-2 text-sm transition-colors hover:bg-surface2'>
 							取消
 						</button>
 						<button onClick={applyManageChanges} className='brand-btn flex-1 justify-center px-4'>

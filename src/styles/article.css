@@ -1,142 +1,196 @@
+/* ============================================================================
+ * article.css — 文章正文排版
+ * 全部颜色走语义 token，深浅色自动切换。
+ * ========================================================================== */
+
 .prose {
-	line-height: 1.8;
-	color: inherit;
+	font-size: 17.5px;
+	line-height: 1.88;
+	letter-spacing: 0.011em;
+	color: var(--color-ink2);
 	word-break: break-word;
-	letter-spacing: 0.03em;
-	font-size: 15px;
 	width: 100%;
-	overflow: hidden;
+	overflow-wrap: break-word;
 }
 
-/* Headings */
+/* --- 标题 --------------------------------------------------------------- */
 .prose h1,
 .prose h2,
-.prose h3 {
-	font-weight: 700;
-	line-height: 1.25;
-	margin-top: 2em;
-	margin-bottom: 1.5em;
-
-	&::before {
-		content: '# ';
-		@apply text-brand/60;
-	}
-}
-.prose h1 {
-	font-size: 1.75rem;
-}
-.prose h2 {
-	font-size: 1.25rem;
-}
-.prose h3 {
-	font-size: 1rem;
-	font-weight: 600;
-
-	&::before {
-		content: '## ';
-		@apply text-brand/60;
-	}
-}
+.prose h3,
 .prose h4 {
-	font-size: 0.85rem;
-	font-weight: 500;
-	&::before {
-		content: '### ';
-		@apply text-brand/60;
-	}
-}
-.prose h5 {
-	font-size: 0.75rem;
-	font-weight: 500;
-	&::before {
-		content: '#### ';
-		@apply text-brand/60;
-	}
+	color: var(--color-ink);
+	font-weight: 600;
+	line-height: 1.35;
+	letter-spacing: -0.018em;
+	scroll-margin-top: 104px;
 }
 
-/* Paragraph */
+.prose h1 {
+	font-size: 28px;
+	margin: 2.2em 0 0.8em;
+}
+
+.prose h2 {
+	font-size: 22px;
+	margin: 2.4em 0 0.85em;
+}
+
+/* 二级标题前那道短横是这套排版的签名细节 */
+.prose h2::before {
+	content: '';
+	display: block;
+	width: 28px;
+	height: 3px;
+	border-radius: 2px;
+	background: var(--color-brand);
+	margin-bottom: 16px;
+}
+
+.prose h3 {
+	font-size: 18px;
+	margin: 1.9em 0 0.6em;
+}
+
+.prose h4 {
+	font-size: 16px;
+	margin: 1.6em 0 0.5em;
+	opacity: 0.85;
+}
+
+/* --- 段落与行内 --------------------------------------------------------- */
 .prose p {
-	margin: 1.25em 0;
+	margin: 0 0 1.35em;
 }
 
 .prose strong {
+	color: var(--color-ink);
 	font-weight: 600;
-	color: var(--color-brand);
-	margin: 0 0.25em;
 }
 
-/* Links */
+.prose em {
+	font-style: italic;
+}
+
 .prose a {
+	color: var(--color-brand-ink);
 	text-decoration: underline;
-	text-underline-offset: 2px;
-	color: var(--color-blue-500);
-	font-weight: 500;
-}
-.prose a:hover {
-	opacity: 0.9;
+	text-decoration-color: color-mix(in srgb, var(--color-brand) 40%, transparent);
+	text-underline-offset: 3px;
+	transition: text-decoration-color 0.15s var(--ease);
 }
 
-/* Lists */
+.prose a:hover {
+	text-decoration-color: var(--color-brand);
+}
+
+.prose hr {
+	border: 0;
+	border-top: 1px solid var(--color-hair);
+	margin: 2.4em 0;
+}
+
+/* --- 列表 --------------------------------------------------------------- */
 .prose ul,
 .prose ol {
-	margin: 0.75em 0 0.75em 1.25em;
-}
-.prose ul {
-	list-style-type: square;
-}
-.prose ol {
-	list-style-type: lower-roman;
-}
-.prose li {
-	margin: 0.35em 0;
+	margin: 0 0 1.35em;
+	padding-left: 1.35em;
 }
 
-/* Task Lists */
+.prose ul {
+	list-style: disc;
+}
+
+.prose ol {
+	list-style: decimal;
+}
+
+.prose li {
+	margin: 0.45em 0;
+}
+
+.prose li::marker {
+	color: var(--color-brand);
+}
+
 .prose li.task-list-item {
-	list-style-type: none;
+	list-style: none;
 	margin-left: -1.25em;
-	padding-left: 0;
 	display: flex;
 	align-items: flex-start;
 	gap: 0.5em;
 }
+
 .prose li.task-list-item input[type='checkbox'] {
-	margin-top: 0.5em;
-	cursor: default;
+	margin-top: 0.55em;
 	flex-shrink: 0;
+	accent-color: var(--color-brand);
 }
 
-/* Code */
+/* --- 引用 --------------------------------------------------------------- */
+.prose blockquote {
+	margin: 1.8em 0;
+	padding: 4px 0 4px 22px;
+	border-left: 2px solid color-mix(in srgb, var(--color-brand) 45%, transparent);
+	color: var(--color-muted);
+	font-size: 16.5px;
+}
+
+.prose blockquote p:last-child {
+	margin-bottom: 0;
+}
+
+/* --- 代码 --------------------------------------------------------------- */
 .prose code {
-	@apply bg-brand-secondary/8;
-	border: 1px solid rgba(0, 0, 0, 0.06);
-	padding: 0.15em 0.4em;
-	border-radius: 6px;
-	font-size: 0.9em;
 	font-family: var(--font-mono);
+	font-size: 0.875em;
+	padding: 2px 6px;
+	border-radius: 6px;
+	background: var(--color-surface2);
+	border: 1px solid var(--color-hair);
+	color: var(--color-ink);
 }
+
 .prose pre {
-	border: 1px solid rgba(0, 0, 0, 0.06);
-	padding: 1rem 1.25rem;
-	border-radius: 12px;
+	margin: 1.8em 0;
+	padding: 20px 22px;
+	border-radius: 14px;
+	border: 1px solid var(--color-hair);
+	background: var(--color-surface2);
 	overflow: auto;
-	margin: 1em 0 2em;
-	line-height: 1.25em;
-	width: 100%;
-	display: block;
+	font-family: var(--font-mono);
+	font-size: 13.5px;
+	line-height: 1.72;
 }
+
 .prose pre code {
-	background: transparent !important;
+	background: transparent;
 	border: 0;
 	padding: 0;
-	font-size: 0.95em;
+	font-size: inherit;
+	color: inherit;
 	tab-size: 2;
 }
 
-/* Code Block with Copy Button */
+/* shiki 双主题（themes: {light, dark}）的实际输出是：
+   浅色主题的 color 直接写在每个 span 的行内 style 上，深色主题只写 --shiki-dark 变量。
+
+   所以浅色下**一条 color 规则都不要写** —— 之前用
+   `color: var(--shiki-light) !important`，而 --shiki-light 根本不存在，
+   声明失效、颜色退回 <pre> 的继承值，语法高亮整片消失。
+   深色才需要 !important 去压行内的浅色 color。 */
+html[data-theme='dark'] .prose pre.shiki {
+	background-color: var(--shiki-dark-bg, #282c34) !important;
+	color: var(--shiki-dark, #abb2bf) !important;
+}
+
+html[data-theme='dark'] .prose pre.shiki span {
+	color: var(--shiki-dark) !important;
+}
+
+/* --- 代码块复制按钮 ----------------------------------------------------- */
 .prose .code-block-wrapper {
 	position: relative;
-	margin: 1em 0 2em;
+	margin: 1.8em 0;
 }
 
 .prose .code-block-wrapper > pre {
@@ -145,86 +199,79 @@
 
 .prose .code-block-copy-btn {
 	position: absolute;
-	top: 0.75rem;
-	right: 0.75rem;
+	top: 10px;
+	right: 10px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 32px;
-	height: 32px;
+	width: 30px;
+	height: 30px;
 	padding: 0;
-	background: rgba(255, 255, 255, 0.9);
-	border: 1px solid rgba(0, 0, 0, 0.1);
-	border-radius: 6px;
+	background: var(--color-surface);
+	border: 1px solid var(--color-hair);
+	border-radius: 8px;
+	color: var(--color-muted);
 	cursor: pointer;
 	opacity: 0;
-	transition: opacity 0.2s, background 0.2s;
+	transition:
+		opacity 0.18s var(--ease),
+		background 0.18s var(--ease),
+		color 0.18s var(--ease);
 	z-index: 10;
 }
 
-.prose .code-block-wrapper:hover .code-block-copy-btn {
+.prose .code-block-wrapper:hover .code-block-copy-btn,
+.prose .code-block-copy-btn:focus-visible {
 	opacity: 1;
 }
 
 .prose .code-block-copy-btn:hover {
-	background: rgba(255, 255, 255, 1);
-	border-color: rgba(0, 0, 0, 0.15);
+	color: var(--color-ink);
+	border-color: var(--color-hair2);
 }
 
 .prose .code-block-copy-btn:active {
 	transform: scale(0.95);
 }
 
-/* Images */
+/* --- 图片 --------------------------------------------------------------- */
 .prose img {
-	max-width: 40%;
-	margin: 1.5em auto;
+	display: block;
+	max-width: 100%;
 	height: auto;
-	border-radius: 12px;
-	border: 1px solid rgba(0, 0, 0, 0.1);
-
-	@apply max-sm:max-w-full;
-}
-
-/* Blockquote */
-.prose blockquote {
-	border-left: 3px solid var(--color-brand);
-	background: rgba(0, 0, 0, 0.03);
-	margin: 1em 0;
-	padding: 0.75em 1em;
-	border-radius: 8px;
-}
-
-/* HR */
-.prose hr {
-	border: 0;
-	border-top: 1px solid rgba(0, 0, 0, 0.08);
-	margin: 1.5em 0;
-}
-
-/* Tables */
-.prose table {
-	width: 100%;
-	border-collapse: collapse;
-	font-size: 0.95em;
-	margin: 1em 0;
-}
-.prose th,
-.prose td {
-	border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-	padding: 0.5em 0.6em;
-	text-align: left;
-}
-.prose thead th {
-	font-weight: 600;
-}
-
-/* Anchor offset for in-page headings */
-.prose [id] {
-	scroll-margin-top: 100px;
+	margin: 1.8em auto;
+	border-radius: 14px;
+	border: 1px solid var(--color-hair);
 }
 
 .prose iframe {
-	border: 1px solid rgba(0, 0, 0, 0.08);
-	border-radius: 8px;
+	border: 1px solid var(--color-hair);
+	border-radius: 10px;
+	max-width: 100%;
+}
+
+/* --- 表格 --------------------------------------------------------------- */
+.prose table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 15px;
+	margin: 1.8em 0;
+}
+
+.prose th,
+.prose td {
+	border-bottom: 1px solid var(--color-hair);
+	padding: 10px 14px;
+	text-align: left;
+}
+
+.prose thead th {
+	font-weight: 600;
+	color: var(--color-ink);
+	font-size: 13.5px;
+}
+
+/* --- 锚点 --------------------------------------------------------------- */
+.prose [id] {
+	scroll-margin-top: 104px;
 }

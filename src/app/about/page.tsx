@@ -1,14 +1,16 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
 import { useMarkdownRender } from '@/hooks/use-markdown-render'
 import { pushAbout, type AboutData } from './services/push-about'
-import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
+import { Container } from '@/components/ui/container'
+import { Button } from '@/components/ui/button'
+import { EditToolbar } from '@/components/edit-toolbar'
 import LikeButton from '@/components/like-button'
-import GithubSVG from '@/svgs/github.svg'
+import { Github } from 'lucide-react'
 import initialData from './list.json'
 
 export default function Page() {
@@ -17,31 +19,10 @@ export default function Page() {
 	const [isEditMode, setIsEditMode] = useState(false)
 	const [isSaving, setIsSaving] = useState(false)
 	const [isPreviewMode, setIsPreviewMode] = useState(false)
-	const keyInputRef = useRef<HTMLInputElement>(null)
 
-	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
 	const { content, loading } = useMarkdownRender(data.content)
 	const hideEditButton = siteContent.hideEditButton ?? false
-
-	const handleChoosePrivateKey = async (file: File) => {
-		try {
-			const text = await file.text()
-			setPrivateKey(text)
-			await handleSave()
-		} catch (error) {
-			console.error('Failed to read private key:', error)
-			toast.error('读取密钥文件失败')
-		}
-	}
-
-	const handleSaveClick = () => {
-		if (!isAuth) {
-			keyInputRef.current?.click()
-		} else {
-			handleSave()
-		}
-	}
 
 	const handleEnterEditMode = () => {
 		setIsEditMode(true)
@@ -72,8 +53,6 @@ export default function Page() {
 		setIsPreviewMode(false)
 	}
 
-	const buttonText = isAuth ? '保存' : '导入密钥'
-
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (!isEditMode && (e.ctrlKey || e.metaKey) && e.key === ',') {
@@ -91,134 +70,94 @@ export default function Page() {
 
 	return (
 		<>
-			<input
-				ref={keyInputRef}
-				type='file'
-				accept='.pem'
-				className='hidden'
-				onChange={async e => {
-					const f = e.target.files?.[0]
-					if (f) await handleChoosePrivateKey(f)
-					if (e.currentTarget) e.currentTarget.value = ''
-				}}
+			<EditToolbar
+				editing={isEditMode}
+				saving={isSaving}
+				hideEditButton={hideEditButton}
+				onEdit={handleEnterEditMode}
+				onCancel={handleCancel}
+				onSave={handleSave}
+				extra={
+					<Button size='sm' onClick={() => setIsPreviewMode(prev => !prev)} disabled={isSaving}>
+						{isPreviewMode ? '继续编辑' : '预览'}
+					</Button>
+				}
 			/>
 
-			<div className='flex flex-col items-center justify-center px-6 pt-32 pb-12 max-sm:px-0'>
-				<div className='w-full max-w-[800px]'>
-					{isEditMode ? (
-						isPreviewMode ? (
-							<div className='space-y-6'>
-								<div className='text-center'>
-									<h1 className='mb-4 text-4xl font-bold'>{data.title || '标题预览'}</h1>
-									<p className='text-secondary text-lg'>{data.description || '描述预览'}</p>
-								</div>
+			<Container className='pb-20'>
+				<div className='mx-auto w-full max-w-[716px] pt-14'>
+					{/* 标题区：编辑态下直接可改 */}
+					<header className='mb-10'>
+						<div className='text-faint mb-4 flex items-center gap-2 font-mono text-[11.5px] tracking-[0.14em] uppercase'>
+							<span className='bg-hair2 block h-px w-5' />
+							关于
+						</div>
 
-								{loading ? (
-									<div className='text-secondary text-center'>预览渲染中...</div>
-								) : (
-									<div className='card relative p-6'>
-										<div className='prose prose-sm max-w-none'>{content}</div>
-									</div>
-								)}
+						{isEditMode && !isPreviewMode ? (
+							<div className='space-y-3'>
+								<input
+									type='text'
+									placeholder='标题'
+									aria-label='标题'
+									className='text-ink border-hair bg-surface2 w-full rounded-[12px] border px-4 py-3 text-[28px] font-semibold tracking-[-0.02em]'
+									value={data.title}
+									onChange={e => setData({ ...data, title: e.target.value })}
+								/>
+								<input
+									type='text'
+									placeholder='描述'
+									aria-label='描述'
+									className='text-ink2 border-hair bg-surface2 w-full rounded-[12px] border px-4 py-2.5 text-[15px]'
+									value={data.description}
+									onChange={e => setData({ ...data, description: e.target.value })}
+								/>
 							</div>
 						) : (
-							<div className='space-y-6'>
-								<div className='space-y-4'>
-									<input
-										type='text'
-										placeholder='标题'
-										className='w-full px-4 py-3 text-center text-2xl font-bold'
-										value={data.title}
-										onChange={e => setData({ ...data, title: e.target.value })}
-									/>
-									<input
-										type='text'
-										placeholder='描述'
-										className='w-full px-4 py-3 text-center text-lg'
-										value={data.description}
-										onChange={e => setData({ ...data, description: e.target.value })}
-									/>
-								</div>
+							<>
+								<h1 className='text-ink mb-3 text-[32px] font-semibold tracking-[-0.028em] sm:text-[38px]'>
+									{data.title || '标题预览'}
+								</h1>
+								<p className='text-muted text-[15px]'>{data.description || '描述预览'}</p>
+							</>
+						)}
+					</header>
 
-								<div className='card relative'>
-									<textarea
-										placeholder='Markdown 内容'
-										className='min-h-[400px] w-full resize-none text-sm'
-										value={data.content}
-										onChange={e => setData({ ...data, content: e.target.value })}
-									/>
-								</div>
-							</div>
-						)
+					{isEditMode && !isPreviewMode ? (
+						<textarea
+							placeholder='Markdown 内容'
+							aria-label='Markdown 内容'
+							className='border-hair bg-surface2 min-h-[460px] w-full resize-none rounded-[14px] border p-5 font-mono text-[13.5px] leading-[1.8]'
+							value={data.content}
+							onChange={e => setData({ ...data, content: e.target.value })}
+						/>
+					) : loading ? (
+						<div className='space-y-3'>
+							{[0, 1, 2, 3, 4].map(index => (
+								<div key={index} className='bg-surface2 h-4 animate-pulse rounded' style={{ width: `${92 - index * 6}%` }} />
+							))}
+						</div>
 					) : (
-						<>
-							<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className='mb-12 text-center'>
-								<h1 className='mb-4 text-4xl font-bold'>{data.title}</h1>
-								<p className='text-secondary text-lg'>{data.description}</p>
-							</motion.div>
-
-							{loading ? (
-								<div className='text-secondary text-center'>加载中...</div>
-							) : (
-								<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className='card relative p-6'>
-									<div className='prose prose-sm max-w-none'>{content}</div>
-								</motion.div>
-							)}
-						</>
+						<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='prose'>
+							{content}
+						</motion.div>
 					)}
 
-					<div className='mt-8 flex items-center justify-center gap-6'>
-						<motion.a
-							href='https://github.com/YYsuni/2025-blog-public'
-							target='_blank'
-							rel='noreferrer'
-							initial={{ opacity: 0, scale: 0.6 }}
-							animate={{ opacity: 1, scale: 1 }}
-							transition={{ delay: 0 }}
-							className='bg-card flex h-[53px] w-[53px] items-center justify-center rounded-full border'>
-							<GithubSVG />
-						</motion.a>
-
+					<footer className='border-hair mt-14 flex items-center justify-between gap-4 border-t pt-8'>
+						<div className='flex flex-wrap items-center gap-3'>
+							<a
+								href='https://github.com/SUERYET/2025-blog-public'
+								target='_blank'
+								rel='noreferrer'
+								className='border-hair bg-surface text-ink2 hover:border-brand/40 hover:text-brand-ink inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[13px] transition-colors'>
+								<Github className='size-4' aria-hidden />
+								GitHub 开源仓库
+							</a>
+							<span className='text-faint text-[12.5px]'>这个站的所有代码和内容都在上面</span>
+						</div>
 						<LikeButton slug='open-source' delay={0} />
-					</div>
+					</footer>
 				</div>
-			</div>
-
-			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className='fixed top-4 right-6 z-10 flex gap-3 max-sm:hidden'>
-				{isEditMode ? (
-					<>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={handleCancel}
-							disabled={isSaving}
-							className='rounded-xl border bg-white/60 px-6 py-2 text-sm'>
-							取消
-						</motion.button>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={() => setIsPreviewMode(prev => !prev)}
-							disabled={isSaving}
-							className={`rounded-xl border bg-white/60 px-6 py-2 text-sm`}>
-							{isPreviewMode ? '继续编辑' : '预览'}
-						</motion.button>
-						<motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleSaveClick} disabled={isSaving} className='brand-btn px-6'>
-							{isSaving ? '保存中...' : buttonText}
-						</motion.button>
-					</>
-				) : (
-					!hideEditButton && (
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={handleEnterEditMode}
-							className='rounded-xl border bg-white/60 px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80'>
-							编辑
-						</motion.button>
-					)
-				)}
-			</motion.div>
+			</Container>
 		</>
 	)
 }

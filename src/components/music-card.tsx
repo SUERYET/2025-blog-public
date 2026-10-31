@@ -191,7 +191,7 @@ export default function MusicCard() {
 						<div className='min-w-0 flex-1'>
 							<div className='text-secondary truncate text-sm'>{MUSIC_LIST[currentIndex].title}</div>
 
-							<div className='mt-1 h-2 rounded-full bg-white/60'>
+							<div className='mt-1 h-2 rounded-full bg-surface/60'>
 								<div className='bg-linear h-full rounded-full transition-all duration-300' style={{ width: `${progress}%` }} />
 							</div>
 
@@ -207,7 +207,7 @@ export default function MusicCard() {
 								e.stopPropagation()
 								togglePlayPause()
 							}}
-							className='flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-white transition-opacity hover:opacity-80'>
+							className='flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-surface transition-opacity hover:opacity-80'>
 							{isPlaying ? <Pause className='text-brand h-4 w-4' /> : <PlaySVG className='text-brand ml-1 h-4 w-4' />}
 						</button>
 					</div>
@@ -219,7 +219,7 @@ export default function MusicCard() {
 									onClick={() => selectTrack(index)}
 									className={clsx(
 										'cursor-pointer rounded-lg px-3 py-2 text-sm transition-colors',
-										currentIndex === index ? 'text-brand bg-white/40 font-medium' : 'text-secondary hover:bg-white/20'
+										currentIndex === index ? 'text-brand bg-surface/40 font-medium' : 'text-secondary hover:bg-surface/20'
 									)}>
 									{track.title}
 								</div>

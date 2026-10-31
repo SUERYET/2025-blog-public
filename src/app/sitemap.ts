@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import blogIndex from '@/../public/blogs/index.json'
 import type { BlogIndexItem } from '@/app/blog/types'
+import { publicPosts } from '@/lib/blog-visibility'
 
 export const dynamic = 'force-static'
 
@@ -13,7 +14,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
 	console.log(`[Sitemap] Generating for: ${baseUrl}`)
 
-	let posts: BlogIndexItem[] = blogIndex
+	// hidden 文章不进 sitemap —— 否则"不想公开"等于没写
+	let posts: BlogIndexItem[] = publicPosts(blogIndex as BlogIndexItem[])
 
 	const postEntries: MetadataRoute.Sitemap = posts.map(post => ({
 		url: `${baseUrl}/blog/${post.slug}`,

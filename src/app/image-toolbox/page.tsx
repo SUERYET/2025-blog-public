@@ -315,8 +315,8 @@ export default function Page() {
 					onDragOver={handleDragOver}
 					onDragLeave={handleDragLeave}
 					onDrop={handleDrop}
-					className={`group hover:border-brand/20 card relative flex cursor-pointer flex-col items-center justify-center gap-3 text-center transition-colors hover:bg-white/80 ${
-						isDragging ? 'border-brand bg-white' : ''
+					className={`group hover:border-brand/20 card relative flex cursor-pointer flex-col items-center justify-center gap-3 text-center transition-colors hover:bg-surface/80 ${
+						isDragging ? 'border-brand bg-surface' : ''
 					}`}>
 					<input type='file' accept='image/*' multiple className='hidden' onChange={event => handleFiles(event.target.files)} />
 					<div className='bg-brand/10 text-brand/60 group-hover:bg-brand/10 flex h-20 w-20 items-center justify-center rounded-full text-3xl transition'>

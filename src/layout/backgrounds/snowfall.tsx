@@ -78,7 +78,7 @@ export default function SnowfallBackground({ zIndex, count = 125 }: { zIndex: nu
 						ease: 'linear'
 					}}>
 					{snowflake.type === 'dot' ? (
-						<div className='h-full w-full rounded-full bg-white' />
+						<div className='h-full w-full rounded-full bg-surface' />
 					) : (
 						<img src={SNOWFLAKE_IMAGES[snowflake.imageIndex!]} alt='' className='h-full w-full object-contain' draggable={false} />
 					)}

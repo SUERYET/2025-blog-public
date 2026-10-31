@@ -109,7 +109,7 @@ export function ArtImagesSection({ formData, setFormData, artImageUploads, setAr
 		<div>
 			<label className='mb-2 block text-sm font-medium'>首页图片</label>
 			<input ref={artInputRef} type='file' accept='image/*' multiple className='hidden' onChange={handleArtFilesSelect} />
-			{(formData.artImages?.length ?? 0) === 0 && <p className='mb-2 text-xs text-gray-500'>暂未配置 Art 图片，点击下方「+」添加。</p>}
+			{(formData.artImages?.length ?? 0) === 0 && <p className='mb-2 text-xs text-muted'>暂未配置 Art 图片，点击下方「+」添加。</p>}
 			<div className='grid grid-cols-4 gap-3 max-sm:grid-cols-3'>
 				{formData.artImages?.map(item => {
 					const isActive = formData.currentArtImageId === item.id
@@ -121,7 +121,7 @@ export function ArtImagesSection({ formData, setFormData, artImageUploads, setAr
 							<button
 								type='button'
 								onClick={() => handleSetCurrentArtImage(item.id)}
-								className={`block w-full overflow-hidden rounded-xl border bg-white/60 transition-all ${
+								className={`block w-full overflow-hidden rounded-xl border bg-surface/60 transition-all ${
 									isActive ? 'ring-brand shadow-md ring-2' : 'hover:border-brand/60'
 								}`}>
 								<img src={src} alt='art preview' className='h-24 w-full object-cover' />
@@ -132,7 +132,7 @@ export function ArtImagesSection({ formData, setFormData, artImageUploads, setAr
 							<button
 								type='button'
 								onClick={() => handleRemoveArtImage(item.id)}
-								className='text-secondary absolute top-1 right-1 hidden rounded-full bg-white/90 px-1.5 py-0.5 text-[10px] shadow group-hover:block'>
+								className='text-secondary absolute top-1 right-1 hidden rounded-full bg-surface/90 px-1.5 py-0.5 text-[10px] shadow group-hover:block'>
 								删除
 							</button>
 						</div>
@@ -142,7 +142,7 @@ export function ArtImagesSection({ formData, setFormData, artImageUploads, setAr
 					<button
 						type='button'
 						onClick={() => artInputRef.current?.click()}
-						className='hover:border-brand/60 flex h-24 w-full items-center justify-center rounded-xl border border-dashed bg-white/40 text-2xl text-gray-400 hover:bg-white/80'>
+						className='hover:border-brand/60 flex h-24 w-full items-center justify-center rounded-xl border border-dashed bg-surface/40 text-2xl text-faint hover:bg-surface/80'>
 						+
 					</button>
 				</div>

@@ -75,7 +75,7 @@ export default function AvatarUploadDialog({ currentAvatar, onClose, onSubmit }:
 					<input ref={fileInputRef} type='file' accept='image/*' className='hidden' onChange={handleFileSelect} />
 					<div
 						onClick={() => fileInputRef.current?.click()}
-						className='mx-auto flex h-32 w-32 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-secondary/10 transition-colors hover:bg-gray-200'>
+						className='mx-auto flex h-32 w-32 cursor-pointer items-center justify-center rounded-full border border-hair2 bg-secondary/10 transition-colors hover:bg-hair2'>
 						{previewFile ? (
 							<img src={previewFile.previewUrl} alt='preview' className='h-full w-full rounded-lg object-cover' />
 						) : (
@@ -89,10 +89,10 @@ export default function AvatarUploadDialog({ currentAvatar, onClose, onSubmit }:
 
 				<div className='relative'>
 					<div className='absolute inset-0 flex items-center'>
-						<div className='w-full border-t border-gray-300'></div>
+						<div className='w-full border-t border-hair2'></div>
 					</div>
 					<div className='relative flex justify-center text-sm'>
-						<span className='text-secondary rounded-lg bg-white px-4 py-1'>或</span>
+						<span className='text-secondary rounded-lg bg-surface px-4 py-1'>或</span>
 					</div>
 				</div>
 
@@ -109,7 +109,7 @@ export default function AvatarUploadDialog({ currentAvatar, onClose, onSubmit }:
 							}
 						}}
 						placeholder='https://example.com/avatar.png'
-						className='focus:ring-brand w-full rounded-lg border border-gray-300 bg-gray-200 px-4 py-2 focus:ring-2 focus:outline-none'
+						className='focus:ring-brand w-full rounded-lg border border-hair2 bg-hair2 px-4 py-2 focus:ring-2 focus:outline-none'
 					/>
 				</div>
 
@@ -120,7 +120,7 @@ export default function AvatarUploadDialog({ currentAvatar, onClose, onSubmit }:
 					<button
 						type='button'
 						onClick={handleClose}
-						className='flex-1 rounded-lg border border-gray-300 bg-white px-6 py-2.5 transition-colors hover:bg-gray-50'>
+						className='flex-1 rounded-lg border border-hair2 bg-surface px-6 py-2.5 transition-colors hover:bg-surface2'>
 						取消
 					</button>
 				</div>

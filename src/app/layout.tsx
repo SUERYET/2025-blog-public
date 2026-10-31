@@ -6,8 +6,7 @@ import Head from '@/layout/head'
 import siteContent from '@/config/site-content.json'
 
 const {
-	meta: { title, description },
-	theme
+	meta: { title, description }
 } = siteContent
 
 export const metadata: Metadata = {
@@ -23,34 +22,45 @@ export const metadata: Metadata = {
 	}
 }
 
-const htmlStyle = {
-	cursor: 'url(/images/cursor.svg) 2 1, auto',
-	'--color-brand': theme.colorBrand,
-	'--color-primary': theme.colorPrimary,
-	'--color-secondary': theme.colorSecondary,
-	'--color-brand-secondary': theme.colorBrandSecondary,
-	'--color-bg': theme.colorBg,
-	'--color-border': theme.colorBorder,
-	'--color-card': theme.colorCard,
-	'--color-article': theme.colorArticle
-}
+/**
+ * 主题初始化：必须在首帧之前跑，否则深色模式会闪白。
+ * 优先级：手动选择 > 跟随系统。
+ */
+const THEME_INIT = `
+(function(){
+	try {
+		var stored = localStorage.getItem('theme');
+		var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+		var theme = stored === 'light' || stored === 'dark' ? stored : (prefersDark ? 'dark' : 'light');
+		document.documentElement.dataset.theme = theme;
+	} catch (e) {
+		document.documentElement.dataset.theme = 'light';
+	}
+	if (/windows|win32/i.test(navigator.userAgent)) {
+		document.documentElement.classList.add('windows');
+	}
+})();
+`
+
+const VIEW_INIT = `
+(function(){
+	try {
+		var stored = localStorage.getItem('home-view');
+		document.documentElement.dataset.view = stored === 'desktop' ? 'desktop' : 'flow';
+	} catch (e) {
+		document.documentElement.dataset.view = 'flow';
+	}
+})();
+`
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
-		<html lang='en' suppressHydrationWarning style={htmlStyle}>
+		<html lang='zh-CN' suppressHydrationWarning>
 			<Head />
 
 			<body>
-				<script
-					dangerouslySetInnerHTML={{
-						__html: `
-					if (/windows|win32/i.test(navigator.userAgent)) {
-						document.documentElement.classList.add('windows');
-					}
-		      `
-					}}
-				/>
-
+				{/* 首帧前决定主题/视图，避免闪白和视图闪烁 */}
+				<script dangerouslySetInnerHTML={{ __html: THEME_INIT + VIEW_INIT }} />
 				<Layout>{children}</Layout>
 			</body>
 		</html>

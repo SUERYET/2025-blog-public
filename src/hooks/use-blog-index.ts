@@ -1,6 +1,7 @@
 import useSWR from 'swr'
 import { useAuthStore } from '@/hooks/use-auth'
 import type { BlogIndexItem } from '@/app/blog/types'
+import { publicPosts } from '@/lib/blog-visibility'
 
 export type { BlogIndexItem } from '@/app/blog/types'
 
@@ -23,10 +24,8 @@ export function useBlogIndex() {
 		revalidateOnReconnect: true
 	})
 
-	let result = data || []
-	if (!isAuth) {
-		result = result.filter(item => !item.hidden)
-	}
+	// 未登录时只给公开文章；登录后（作者本机）要能看到 hidden 的草稿
+	const result = isAuth ? data || [] : publicPosts(data)
 
 	return {
 		items: result,

@@ -78,9 +78,9 @@ export default function UploadDialog({ onClose, onSubmit }: UploadDialogProps) {
 					{images.length === 0 ? (
 						<div
 							onClick={() => fileInputRef.current?.click()}
-							className='flex h-32 cursor-pointer items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 transition-colors hover:bg-secondary/10'>
+							className='flex h-32 cursor-pointer items-center justify-center rounded-xl border border-dashed border-hair2 bg-surface2 transition-colors hover:bg-secondary/10'>
 							<div className='text-center'>
-								<Plus className='mx-auto mb-1 h-8 w-8 text-gray-500' />
+								<Plus className='mx-auto mb-1 h-8 w-8 text-muted' />
 								<p className='text-secondary text-xs'>点击选择图片</p>
 							</div>
 						</div>
@@ -91,7 +91,7 @@ export default function UploadDialog({ onClose, onSubmit }: UploadDialogProps) {
 									image.type === 'file' ? (
 										<div
 											key={index}
-											className={`absolute h-32 w-44 overflow-hidden rounded-xl border-4 border-white bg-white shadow-xl transition-transform ${
+											className={`absolute h-32 w-44 overflow-hidden rounded-xl border-4 border-white bg-surface shadow-xl transition-transform ${
 												index === 0 ? '-left-4 -translate-y-2 -rotate-6' : index === 1 ? 'z-20 rotate-1' : 'right-0 translate-y-2 rotate-6'
 											}`}>
 											<img src={image.previewUrl} alt={`preview-${index}`} className='h-full w-full object-cover' />
@@ -109,7 +109,7 @@ export default function UploadDialog({ onClose, onSubmit }: UploadDialogProps) {
 								<button
 									type='button'
 									onClick={() => fileInputRef.current?.click()}
-									className='rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700 transition-colors hover:bg-gray-50'>
+									className='rounded-lg border border-hair2 bg-surface px-3 py-1.5 text-xs text-ink2 transition-colors hover:bg-surface2'>
 									继续添加
 								</button>
 							</div>
@@ -123,7 +123,7 @@ export default function UploadDialog({ onClose, onSubmit }: UploadDialogProps) {
 						value={description}
 						onChange={e => setDescription(e.target.value)}
 						placeholder='这组图片的说明...'
-						className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none'
+						className='w-full rounded-md border border-hair2 bg-surface2 px-3 py-2 text-sm focus:outline-none'
 						rows={3}
 					/>
 				</div>
@@ -132,7 +132,7 @@ export default function UploadDialog({ onClose, onSubmit }: UploadDialogProps) {
 					<button
 						type='button'
 						onClick={handleClose}
-						className='flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm transition-colors hover:bg-gray-50'>
+						className='flex-1 rounded-lg border border-hair2 bg-surface px-4 py-2 text-sm transition-colors hover:bg-surface2'>
 						取消
 					</button>
 					<button type='button' onClick={handleSubmit} className='brand-btn flex-1 justify-center px-4'>

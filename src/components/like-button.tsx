@@ -112,7 +112,7 @@ export default function LikeButton({ slug = 'yysuni', delay, className }: LikeBu
 						animate={{ scale: 1 }}
 						className={cn(
 							'absolute -top-2 left-9 min-w-6 rounded-full px-1.5 py-1 text-center text-xs text-white tabular-nums',
-							liked ? 'bg-rose-400' : 'bg-gray-300'
+							liked ? 'bg-rose-400' : 'bg-hair2'
 						)}>
 						{count}
 					</motion.span>

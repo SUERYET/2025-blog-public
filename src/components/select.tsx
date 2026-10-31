@@ -150,7 +150,7 @@ export function Select({ value, onChange, options, className, disabled }: Select
 												className={cn(
 													'w-full rounded-lg px-3 py-2 text-left text-xs transition-all',
 													'active:scale-[0.98]',
-													isSelected ? 'bg-brand/10 text-brand font-medium' : 'hover:bg-gray-100/50 dark:hover:bg-gray-800/50'
+													isSelected ? 'bg-brand/10 text-brand font-medium' : 'hover:bg-surface2/50 hover:bg-surface2'
 												)}>
 												{option.label}
 											</button>

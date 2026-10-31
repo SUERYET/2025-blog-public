@@ -23,9 +23,10 @@ export function useMarkdownRender(markdown: string): MarkdownRenderResult {
 			try {
 				const { html, toc } = await renderMarkdown(markdown)
 				if (!cancelled) {
-					// Extract pre elements and replace with placeholders before parsing
+					// 抽离代码块：外层是 <div data-code>（内部才是 shiki 的 <pre>）。
+					// 用 div 而不是 pre，是为了避免嵌套 <pre> 让非贪婪正则提前截断。
 					const codeBlocks: Array<{ placeholder: string; code: string; preHtml: string }> = []
-					let processedHtml = html.replace(/<pre\s+data-code="([^"]*)"([^>]*)>([\s\S]*?)<\/pre>/g, (match, codeAttr, attrs, content) => {
+					let processedHtml = html.replace(/<div\s+data-code="([^"]*)"[^>]*>([\s\S]*?)<\/div>/g, (match, codeAttr, content) => {
 						const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`
 						// Decode HTML entities in code attribute
 						const code = codeAttr

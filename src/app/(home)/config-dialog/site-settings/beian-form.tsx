@@ -13,7 +13,7 @@ export function BeianForm({ formData, setFormData }: BeianFormProps) {
 			<label className='mb-2 block text-sm font-medium'>备案信息</label>
 			<div className='grid grid-cols-2 gap-2'>
 				<div>
-					<label className='mb-1 block text-xs text-gray-600'>备案号</label>
+					<label className='mb-1 block text-xs text-muted'>备案号</label>
 					<input
 						type='text'
 						value={formData.beian?.text || ''}
@@ -23,7 +23,7 @@ export function BeianForm({ formData, setFormData }: BeianFormProps) {
 					/>
 				</div>
 				<div>
-					<label className='mb-1 block text-xs text-gray-600'>备案链接（可选）</label>
+					<label className='mb-1 block text-xs text-muted'>备案链接（可选）</label>
 					<input
 						type='url'
 						value={formData.beian?.link || ''}

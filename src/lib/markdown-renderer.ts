@@ -65,8 +65,19 @@ export async function renderMarkdown(markdown: string): Promise<MarkdownRenderRe
 	// Render HTML with heading ids
 	const renderer = new marked.Renderer()
 
+	// 同一篇文章里常有重名标题（比如两个「例题」），slugify 后会撞 id，
+	// 既让锚点失效，也让 TOC 的 React key 重复。这里做一次去重：xxx、xxx-2、xxx-3…
+	const usedIds = new Map<string, number>()
+	const uniqueHeadingId = (text: string) => {
+		const base = slugify(text) || 'section'
+		const seen = usedIds.get(base) ?? 0
+		usedIds.set(base, seen + 1)
+		return seen === 0 ? base : `${base}-${seen + 1}`
+	}
+
 	renderer.heading = (token: Tokens.Heading) => {
-		const id = slugify(token.text || '')
+		// id 在 extractHeadings 阶段就已分配并挂在 token 上，这里直接复用，保证 TOC 与正文一致
+		const id = (token as unknown as { __id?: string }).__id ?? uniqueHeadingId(token.text || '')
 		return `<h${token.depth} id="${id}">${token.text}</h${token.depth}>`
 	}
 
@@ -78,8 +89,10 @@ export async function renderMarkdown(markdown: string): Promise<MarkdownRenderRe
 			// Escape HTML entities for attribute value
 			const escapedCode = codeData.original.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 			if (codeData.html) {
-				// Shiki highlighted code
-				return `<pre data-code="${escapedCode}">${codeData.html}</pre>`
+				// shiki 输出的本身就是完整的 <pre class="shiki">…</pre>。
+				// 外层用 <div> 包，不能用 <pre>：嵌套 <pre> 会让抽离用的非贪婪正则
+				// 停在内层 </pre>，导致内容截断、部分代码块渲染成空壳。
+				return `<div data-code="${escapedCode}">${codeData.html}</div>`
 			}
 			// Fallback for failed highlighting
 			return `<pre data-code="${escapedCode}"><code>${codeData.original}</code></pre>`
@@ -186,11 +199,14 @@ export async function renderMarkdown(markdown: string): Promise<MarkdownRenderRe
 	const toc: TocItem[] = []
 	function extractHeadings(tokenList: typeof tokens) {
 		for (const token of tokenList) {
-			if (token.type === 'heading' && token.depth <= 3) {
-				// Use the parsed text (markdown syntax like links/code already stripped)
+			if (token.type === 'heading') {
+				// 所有标题都分配 id（含 h4+），避免和正文里未进 TOC 的标题撞车
 				const text = token.text
-				const id = slugify(text)
-				toc.push({ id, text, level: token.depth })
+				const id = uniqueHeadingId(text)
+				;(token as unknown as { __id?: string }).__id = id
+
+				// TOC 只收前三层
+				if (token.depth <= 3) toc.push({ id, text, level: token.depth })
 			}
 			// Recursively check nested tokens (e.g., in blockquotes, lists)
 			if ('tokens' in token && token.tokens) {
@@ -209,9 +225,11 @@ export async function renderMarkdown(markdown: string): Promise<MarkdownRenderRe
 
 			if (shiki) {
 				try {
+					// 双主题：同时写入 --shiki-light / --shiki-dark 两个变量，
+					// 由 CSS 按当前主题挑一个，切换主题时不需要重新渲染代码块。
 					const html = await shiki.codeToHtml(originalCode, {
 						lang: codeToken.lang || 'text',
-						theme: 'one-light'
+						themes: { light: 'one-light', dark: 'one-dark-pro' }
 					})
 					codeBlockMap.set(key, { html, original: originalCode })
 					codeToken.text = key

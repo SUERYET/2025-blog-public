@@ -51,7 +51,7 @@ export function FaviconAvatarUpload({ faviconItem, setFaviconItem, avatarItem, s
 			<div>
 				<label className='mb-2 block text-sm font-medium'>Favicon</label>
 				<input ref={faviconInputRef} type='file' accept='image/*' className='hidden' onChange={handleFaviconFileSelect} />
-				<div className='group relative h-20 w-20 cursor-pointer overflow-hidden rounded-lg border bg-white/60'>
+				<div className='group relative h-20 w-20 cursor-pointer overflow-hidden rounded-lg border bg-surface/60'>
 					{faviconItem?.type === 'file' ? (
 						<img src={faviconItem.previewUrl} alt='favicon preview' className='h-full w-full object-cover' />
 					) : (
@@ -68,7 +68,7 @@ export function FaviconAvatarUpload({ faviconItem, setFaviconItem, avatarItem, s
 			<div>
 				<label className='mb-2 block text-sm font-medium'>Avatar</label>
 				<input ref={avatarInputRef} type='file' accept='image/*' className='hidden' onChange={handleAvatarFileSelect} />
-				<div className='group relative h-20 w-20 cursor-pointer overflow-hidden rounded-full border bg-white/60'>
+				<div className='group relative h-20 w-20 cursor-pointer overflow-hidden rounded-full border bg-surface/60'>
 					{avatarItem?.type === 'file' ? (
 						<img src={avatarItem.previewUrl} alt='avatar preview' className='h-full w-full object-cover' />
 					) : (

@@ -1,14 +1,14 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { motion } from 'motion/react'
+import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import initialList from './list.json'
 import { RandomLayout } from './components/random-layout'
 import UploadDialog from './components/upload-dialog'
 import { pushPictures } from './services/push-pictures'
-import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
+import { Button } from '@/components/ui/button'
+import { EditToolbar } from '@/components/edit-toolbar'
 import type { ImageItem } from '../projects/components/image-upload-dialog'
 import { useRouter } from 'next/navigation'
 
@@ -27,10 +27,8 @@ export default function Page() {
 	const [isSaving, setIsSaving] = useState(false)
 	const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false)
 	const [imageItems, setImageItems] = useState<Map<string, ImageItem>>(new Map())
-	const keyInputRef = useRef<HTMLInputElement>(null)
 	const router = useRouter()
 
-	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
 	const hideEditButton = siteContent.hideEditButton ?? false
 
@@ -155,25 +153,6 @@ export default function Page() {
 		})
 	}
 
-	const handleChoosePrivateKey = async (file: File) => {
-		try {
-			const text = await file.text()
-			setPrivateKey(text)
-			await handleSave()
-		} catch (error) {
-			console.error('Failed to read private key:', error)
-			toast.error('读取密钥文件失败')
-		}
-	}
-
-	const handleSaveClick = () => {
-		if (!isAuth) {
-			keyInputRef.current?.click()
-		} else {
-			handleSave()
-		}
-	}
-
 	const handleSave = async () => {
 		setIsSaving(true)
 
@@ -201,8 +180,6 @@ export default function Page() {
 		setIsEditMode(false)
 	}
 
-	const buttonText = isAuth ? '保存' : '导入密钥'
-
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (!isEditMode && (e.ctrlKey || e.metaKey) && e.key === ',') {
@@ -219,67 +196,35 @@ export default function Page() {
 
 	return (
 		<>
-			<input
-				ref={keyInputRef}
-				type='file'
-				accept='.pem'
-				className='hidden'
-				onChange={async e => {
-					const f = e.target.files?.[0]
-					if (f) await handleChoosePrivateKey(f)
-					if (e.currentTarget) e.currentTarget.value = ''
-				}}
+			<EditToolbar
+				editing={isEditMode}
+				saving={isSaving}
+				hideEditButton={hideEditButton}
+				onEdit={() => setIsEditMode(true)}
+				onCancel={handleCancel}
+				onSave={handleSave}
+				extra={
+					<>
+						<Button size='sm' onClick={() => router.push('/image-toolbox')}>
+							压缩工具
+						</Button>
+						<Button size='sm' onClick={() => setIsUploadDialogOpen(true)}>
+							上传
+						</Button>
+					</>
+				}
 			/>
 
+			{/*
+			 * 拼贴画布是绝对定位、贴着 main 铺开的，加页头会和图片互相压。
+			 * 所以这里不加 hero，只用一个占位块把页脚撑到底部。
+			 */}
 			<RandomLayout pictures={pictures} isEditMode={isEditMode} onDeleteSingle={handleDeleteSingleImage} onDeleteGroup={handleDeleteGroup} />
+			<div aria-hidden className='min-h-[88vh]' />
 
 			{pictures.length === 0 && (
-				<div className='text-secondary flex min-h-screen items-center justify-center text-center text-sm'>
-					还没有上传图片，点击右上角「编辑」后即可开始上传。
-				</div>
+				<div className='text-muted absolute inset-x-0 top-1/2 -translate-y-1/2 text-center text-sm'>还没有上传图片，点右上角「编辑」后即可开始上传。</div>
 			)}
-
-			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className='absolute top-4 right-6 flex gap-3 max-sm:hidden'>
-				{isEditMode ? (
-					<>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={() => router.push('/image-toolbox')}
-							className='rounded-xl border bg-blue-50 px-4 py-2 text-sm text-blue-700'>
-							压缩工具
-						</motion.button>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={handleCancel}
-							disabled={isSaving}
-							className='rounded-xl border bg-white/60 px-6 py-2 text-sm'>
-							取消
-						</motion.button>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={() => setIsUploadDialogOpen(true)}
-							className='rounded-xl border bg-white/60 px-6 py-2 text-sm'>
-							上传
-						</motion.button>
-						<motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleSaveClick} disabled={isSaving} className='brand-btn px-6'>
-							{isSaving ? '保存中...' : buttonText}
-						</motion.button>
-					</>
-				) : (
-					!hideEditButton && (
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={() => setIsEditMode(true)}
-							className='rounded-xl border bg-white/60 px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80'>
-							编辑
-						</motion.button>
-					)
-				)}
-			</motion.div>
 
 			{isUploadDialogOpen && <UploadDialog onClose={() => setIsUploadDialogOpen(false)} onSubmit={handleUploadSubmit} />}
 		</>

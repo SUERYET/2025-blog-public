@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light" data-palette="glacier">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SUERYETO Blog · 重构原型</title>
+<style>
+/* ============================================================
+   0. TOKENS  —  三层：primitive(theme/palette) → semantic → component
+   ============================================================ */
+:root{
+  --max-w: 1120px;
+  --col-w: 716px;
+  --radius-card: 24px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --radius-pill: 999px;
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+  --font-display: 'Averia Gruesa Libre', var(--font-sans);
+}
+
+html[data-theme="light"]{
+  --bg:#F5F8F9; --bg-2:#EAF0F2;
+  --surface:#FFFFFF; --surface-2:#F8FBFC; --surface-3:#F1F5F7;
+  --border:#E2E9EC; --border-strong:#CFDADE;
+  --fg:#0B171D; --fg-2:#33454D; --muted:#54676F; --faint:#6B7E86;
+  --shadow-sm: 0 1px 2px rgba(11,23,29,.05);
+  --shadow-md: 0 1px 2px rgba(11,23,29,.04), 0 10px 28px -14px rgba(11,23,29,.16);
+  --shadow-lg: 0 2px 4px rgba(11,23,29,.03), 0 24px 64px -24px rgba(11,23,29,.22);
+  --glass: rgba(255,255,255,.72);
+  --code-bg:#F6F9FA;
+}
+html[data-theme="dark"]{
+  --bg:#090F12; --bg-2:#0D1519;
+  --surface:#101A1F; --surface-2:#0C1519; --surface-3:#16232A;
+  --border:#1D2B32; --border-strong:#2B3D46;
+  --fg:#E9F2F5; --fg-2:#B6C7CE; --muted:#9BB0B8; --faint:#7C929B;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.5);
+  --shadow-md: 0 1px 2px rgba(0,0,0,.45), 0 12px 32px -16px rgba(0,0,0,.8);
+  --shadow-lg: 0 2px 6px rgba(0,0,0,.5), 0 32px 72px -28px rgba(0,0,0,.9);
+  --glass: rgba(16,26,31,.72);
+  --code-bg:#0B1418;
+}
+
+/* --- palettes: light --- */
+html[data-palette="glacier"]{ --brand:#0EA5E9; --brand-2:#38BDF8; --brand-fg:#fff; --brand-ink:#0369A1; }
+html[data-palette="lagoon"] { --brand:#0891B2; --brand-2:#22D3EE; --brand-fg:#fff; --brand-ink:#0E7490; }
+html[data-palette="mist"]   { --brand:#4E9BA8; --brand-2:#7CC3CF; --brand-fg:#fff; --brand-ink:#356C76; }
+/* --- palettes: dark (提亮，保证对比度) --- */
+html[data-theme="dark"][data-palette="glacier"]{ --brand:#38BDF8; --brand-2:#7DD3FC; --brand-fg:#04141B; --brand-ink:#7DD3FC; }
+html[data-theme="dark"][data-palette="lagoon"] { --brand:#22D3EE; --brand-2:#67E8F9; --brand-fg:#04171A; --brand-ink:#67E8F9; }
+html[data-theme="dark"][data-palette="mist"]   { --brand:#7CC3CF; --brand-2:#A5DCE4; --brand-fg:#06181B; --brand-ink:#A5DCE4; }
+
+html{ --brand-soft: color-mix(in srgb, var(--brand) 11%, transparent);
+      --brand-line: color-mix(in srgb, var(--brand) 28%, transparent); }
+
+/* ============================================================
+   1. BASE
+   ============================================================ */
+*{ box-sizing:border-box; }
+::selection{ background: color-mix(in srgb, var(--brand) 24%, transparent); }
+html,body{ margin:0; padding:0; }
+body{
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 15px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  transition: background .25s var(--ease), color .25s var(--ease);
+}
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
+:focus-visible{ outline:2px solid var(--brand); outline-offset:3px; border-radius:6px; }
+.hidden{ display:none !important; }
+
+/* ============================================================
+   2. HEADER
+   ============================================================ */
+.site-header{
+  position: sticky; top:0; z-index:50;
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  border-bottom: 1px solid transparent;
+  transition: border-color .2s var(--ease), background .2s var(--ease);
+}
+.site-header.is-scrolled{ border-bottom-color: var(--border); background: color-mix(in srgb, var(--bg) 88%, transparent); }
+.hdr-inner{
+  max-width: var(--max-w); margin:0 auto; height:64px; padding:0 28px;
+  display:flex; align-items:center; gap:28px;
+}
+.brand{ display:flex; align-items:center; gap:10px; font-weight:600; letter-spacing:-.01em; }
+.brand .dot{
+  width:26px; height:26px; border-radius:9px; display:grid; place-items:center;
+  background: linear-gradient(140deg, var(--brand-2), var(--brand));
+  color: var(--brand-fg); font-size:12px; font-weight:700;
+  box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--brand) 70%, transparent);
+}
+.nav{ display:flex; align-items:center; gap:2px; margin-left:8px; }
+.nav a, .nav button{
+  padding:7px 12px; border-radius:var(--radius-sm); font-size:14px; color:var(--muted);
+  transition: color .16s var(--ease), background .16s var(--ease);
+  display:inline-flex; align-items:center; gap:4px;
+}
+.nav a:hover, .nav button:hover{ color:var(--fg); background:var(--surface-3); }
+.nav a[aria-current="page"]{ color:var(--fg); font-weight:500; background:var(--surface-3); }
+.hdr-right{ margin-left:auto; display:flex; align-items:center; gap:8px; }
+.icon-btn.mobile-only{ display:none; }
+@media (max-width:900px){ .icon-btn.mobile-only{ display:grid; } }
+.icon-btn{
+  width:34px; height:34px; border-radius:var(--radius-sm); display:grid; place-items:center;
+  color:var(--muted); transition: background .16s var(--ease), color .16s var(--ease);
+}
+.icon-btn:hover{ background:var(--surface-3); color:var(--fg); }
+.icon-btn svg{ width:17px; height:17px; }
+
+/* view switch */
+.seg{
+  display:flex; padding:3px; gap:2px; border-radius:11px;
+  background:var(--surface-3); border:1px solid var(--border);
+}
+.seg button{
+  padding:5px 11px; border-radius:8px; font-size:12.5px; color:var(--muted);
+  display:flex; align-items:center; gap:5px; transition:.16s var(--ease);
+}
+.seg button[aria-pressed="true"]{
+  background:var(--surface); color:var(--fg); font-weight:500; box-shadow:var(--shadow-sm);
+}
+.seg svg{ width:13px; height:13px; }
+
+/* ============================================================
+   3. HERO
+   ============================================================ */
+.wrap{ max-width:var(--max-w); margin:0 auto; padding:0 28px; }
+.hero{ padding: 76px 0 52px; max-width:var(--col-w); }
+.eyebrow{
+  font-family:var(--font-mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--faint); margin-bottom:20px; display:flex; align-items:center; gap:8px;
+}
+.eyebrow::before{ content:""; width:20px; height:1px; background:var(--border-strong); display:block; }
+.hero h1{
+  margin:0 0 18px; font-size:44px; line-height:1.16; letter-spacing:-.028em; font-weight:600;
+}
+.hero h1 em{
+  font-style:normal;
+  background: linear-gradient(100deg, var(--brand), var(--brand-2));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.hero p{ margin:0; font-size:16px; line-height:1.75; color:var(--muted); max-width:56ch; }
+.hero-meta{ margin-top:26px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.chip-link{
+  display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--fg-2);
+  padding:6px 12px; border:1px solid var(--border); border-radius:var(--radius-pill);
+  background:var(--surface); transition:.16s var(--ease);
+}
+.chip-link:hover{ border-color:var(--brand-line); color:var(--brand-ink); transform:translateY(-1px); }
+.chip-link svg{ width:14px; height:14px; }
+
+/* ============================================================
+   4. FEATURED
+   ============================================================ */
+.section-head{
+  display:flex; align-items:baseline; gap:12px; margin: 8px 0 18px;
+}
+.section-head h2{
+  margin:0; font-size:12px; font-weight:600; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--faint); font-family:var(--font-mono);
+}
+.section-head .rule{ flex:1; height:1px; background:var(--border); }
+.featured{
+  display:grid; grid-template-columns: 1.12fr .88fr; gap:0; overflow:hidden;
+  border:1px solid var(--border); border-radius:var(--radius-card); background:var(--surface);
+  box-shadow:var(--shadow-md); transition:.24s var(--ease);
+}
+.featured:hover{ transform:translateY(-2px); box-shadow:var(--shadow-lg); border-color:var(--border-strong); }
+.featured .txt{ padding:32px 34px; display:flex; flex-direction:column; justify-content:center; }
+.featured .kicker{
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--brand-ink); margin-bottom:14px; display:flex; align-items:center; gap:7px;
+}
+.featured .kicker::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--brand); }
+.featured h3{ margin:0 0 12px; font-size:25px; line-height:1.35; letter-spacing:-.02em; font-weight:600; }
+.featured p{ margin:0 0 20px; color:var(--muted); font-size:14.5px; line-height:1.7; }
+.featured .media{ position:relative; aspect-ratio: 16/10; background:var(--surface-3); overflow:hidden; }
+.featured .media img{ width:100%; height:100%; object-fit:cover; display:block; transform:scale(1.01); transition:transform .5s var(--ease); }
+.featured:hover .media img{ transform:scale(1.045); }
+
+/* ============================================================
+   5. ARCHIVE LIST  —  左侧日期沟槽 / 中间正文 / 右侧缩略图
+   ============================================================ */
+.filters{ display:flex; gap:7px; flex-wrap:wrap; margin: 0 0 6px; }
+.filter{
+  padding:6px 13px; border-radius:var(--radius-pill); font-size:13px; color:var(--muted);
+  border:1px solid transparent; transition:.16s var(--ease);
+}
+.filter:hover{ color:var(--fg); background:var(--surface-3); }
+.filter[aria-pressed="true"]{
+  background:var(--brand-soft); color:var(--brand-ink); border-color:var(--brand-line); font-weight:500;
+}
+.archive{ display:flex; flex-direction:column; }
+.row{
+  display:grid; grid-template-columns: 88px 1fr 116px; gap:26px; align-items:start;
+  padding:22px 12px 22px 0; border-top:1px solid var(--border);
+  transition: background .18s var(--ease);
+  position:relative;
+}
+.archive .row:first-child{ border-top:0; }
+.row:hover{ background: color-mix(in srgb, var(--surface) 70%, transparent); }
+.row::before{
+  content:""; position:absolute; left:-28px; top:22px; bottom:22px; width:2px; border-radius:2px;
+  background:var(--brand); opacity:0; transition:opacity .18s var(--ease);
+}
+.row:hover::before{ opacity:.55; }
+.row .date{
+  font-family:var(--font-mono); font-size:12.5px; color:var(--faint);
+  padding-top:5px; letter-spacing:.02em; font-variant-numeric: tabular-nums;
+}
+.row .date strong{ display:block; color:var(--muted); font-weight:500; font-size:13px; }
+.row h3{
+  margin:0 0 7px; font-size:18px; line-height:1.5; font-weight:550; letter-spacing:-.012em;
+  transition: color .16s var(--ease); display:flex; align-items:center; gap:8px;
+}
+.row:hover h3{ color:var(--brand-ink); }
+.row .arrow{
+  opacity:0; transform:translateX(-4px); transition:.18s var(--ease); color:var(--brand);
+  flex-shrink:0;
+}
+.row:hover .arrow{ opacity:1; transform:translateX(0); }
+.row p{ margin:0 0 10px; font-size:14px; color:var(--muted); line-height:1.7; }
+.row .tags{ display:flex; gap:12px; font-family:var(--font-mono); font-size:11.5px; color:var(--faint); }
+.row .tags span::before{ content:"#"; opacity:.6; }
+.row .thumb{
+  aspect-ratio: 16/10; border-radius:12px; overflow:hidden; border:1px solid var(--border);
+  background:var(--surface-3);
+}
+.row .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.row .thumb.empty{ visibility:hidden; }
+.more-link{
+  display:inline-flex; align-items:center; gap:6px; margin-top:26px;
+  font-size:14px; color:var(--brand-ink); font-weight:500;
+}
+.more-link svg{ width:15px; height:15px; transition:transform .16s var(--ease); }
+.more-link:hover svg{ transform:translateX(3px); }
+
+/* ============================================================
+   6. ARTICLE
+   ============================================================ */
+.progress{ position:fixed; top:0; left:0; height:2px; background:linear-gradient(90deg,var(--brand),var(--brand-2)); z-index:60; width:38%; }
+.article-grid{
+  display:grid; grid-template-columns: 188px minmax(0,var(--col-w)); gap:56px;
+  justify-content:center; padding: 48px 0 96px;
+}
+.toc{ position:sticky; top:96px; align-self:start; font-size:13px; }
+.toc-title{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--faint); margin-bottom:14px; }
+.toc ul{ list-style:none; margin:0; padding:0; border-left:1px solid var(--border); }
+.toc li a{
+  display:block; padding:6px 0 6px 14px; margin-left:-1px; border-left:2px solid transparent;
+  color:var(--muted); transition:.16s var(--ease); line-height:1.45;
+}
+.toc li a:hover{ color:var(--fg); }
+.toc li a.active{ color:var(--brand-ink); border-left-color:var(--brand); font-weight:500; }
+.toc li.lvl3 a{ padding-left:26px; font-size:12.5px; }
+
+.article-head{ margin-bottom:34px; }
+.back{
+  display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--muted);
+  margin-bottom:26px; transition:.16s var(--ease);
+}
+.back:hover{ color:var(--brand-ink); }
+.article-head h1{
+  margin:0 0 20px; font-size:36px; line-height:1.34; letter-spacing:-.026em; font-weight:600;
+}
+.article-meta{
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  font-family:var(--font-mono); font-size:12px; color:var(--faint);
+  padding-bottom:26px; border-bottom:1px solid var(--border);
+}
+.article-meta .tags{ display:flex; gap:10px; }
+.article-meta .tags span{ color:var(--brand-ink); }
+.cover{ margin:34px 0 0; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border); }
+.cover img{ width:100%; display:block; aspect-ratio:16/9; object-fit:cover; }
+
+.prose{ font-size:17.5px; line-height:1.88; letter-spacing:.011em; color:var(--fg-2); margin-top:38px; }
+.prose > p{ margin:0 0 1.35em; }
+.prose h2{
+  font-size:22px; font-weight:600; letter-spacing:-.018em; color:var(--fg);
+  margin:2.4em 0 .85em; padding-top:.2em; scroll-margin-top:96px;
+}
+.prose h2::before{ content:""; display:block; width:28px; height:3px; border-radius:2px; background:var(--brand); margin-bottom:16px; }
+.prose h3{ font-size:18px; font-weight:600; color:var(--fg); margin:1.8em 0 .6em; }
+.prose a{ color:var(--brand-ink); text-decoration:underline; text-decoration-color:var(--brand-line); text-underline-offset:3px; }
+.prose strong{ color:var(--fg); font-weight:600; }
+.prose ul,.prose ol{ padding-left:1.35em; margin:0 0 1.35em; }
+.prose li{ margin:.45em 0; }
+.prose li::marker{ color:var(--brand); }
+.prose blockquote{
+  margin:1.8em 0; padding:4px 0 4px 22px; border-left:2px solid var(--brand-line);
+  color:var(--muted); font-size:16.5px;
+}
+.prose code{
+  font-family:var(--font-mono); font-size:.875em; padding:2px 6px; border-radius:6px;
+  background:var(--surface-3); border:1px solid var(--border); color:var(--fg);
+}
+.prose pre{
+  margin:1.8em 0; padding:20px 22px; border-radius:14px; overflow:auto;
+  background:var(--code-bg); border:1px solid var(--border);
+  font-family:var(--font-mono); font-size:13.5px; line-height:1.72; color:var(--fg-2);
+}
+.prose pre code{ background:none; border:0; padding:0; font-size:inherit; color:inherit; }
+.k{ color:#C084FC; } .s{ color:#5EEAD4; } .c{ color:var(--faint); font-style:italic; } .n{ color:#FBBF24; }
+html[data-theme="light"] .k{ color:#9333EA; } html[data-theme="light"] .s{ color:#0D9488; } html[data-theme="light"] .n{ color:#B45309; }
+.prose table{ width:100%; border-collapse:collapse; margin:1.8em 0; font-size:15px; }
+.prose th,.prose td{ text-align:left; padding:10px 14px; border-bottom:1px solid var(--border); }
+.prose th{ font-weight:600; color:var(--fg); font-size:13.5px; }
+.prose hr{ border:0; border-top:1px solid var(--border); margin:2.4em 0; }
+
+.article-foot{
+  margin-top:56px; padding-top:28px; border-top:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+}
+.pager{ display:flex; flex-direction:column; gap:4px; }
+.pager .lbl{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); }
+.pager a{ font-size:15px; font-weight:500; color:var(--fg); transition:.16s var(--ease); }
+.pager a:hover{ color:var(--brand-ink); }
+.like{
+  display:inline-flex; align-items:center; gap:7px; padding:8px 15px; border-radius:var(--radius-pill);
+  border:1px solid var(--border); background:var(--surface); font-size:13px; color:var(--muted);
+  transition:.16s var(--ease);
+}
+.like:hover{ border-color:var(--brand-line); color:var(--brand-ink); }
+.like svg{ width:15px; height:15px; }
+
+/* ============================================================
+   7. DESKTOP MODE
+   ============================================================ */
+.stage{
+  position:relative; height:660px; margin: 40px auto 80px; max-width:1100px;
+  border-radius:32px; overflow:hidden;
+  background:
+    radial-gradient(880px 520px at 22% 18%, color-mix(in srgb, var(--brand) 14%, transparent), transparent 62%),
+    radial-gradient(720px 460px at 78% 24%, color-mix(in srgb, var(--brand-2) 13%, transparent), transparent 60%),
+    radial-gradient(760px 520px at 48% 88%, color-mix(in srgb, #A7F3D0 12%, transparent), transparent 64%),
+    var(--bg-2);
+  border:1px solid var(--border);
+}
+html[data-theme="dark"] .stage{
+  background:
+    radial-gradient(900px 540px at 20% 16%, color-mix(in srgb, var(--brand) 26%, transparent), transparent 66%),
+    radial-gradient(760px 480px at 80% 22%, color-mix(in srgb, var(--brand-2) 18%, transparent), transparent 64%),
+    radial-gradient(820px 560px at 50% 92%, color-mix(in srgb, #0F766E 45%, transparent), transparent 68%),
+    #060B0E;
+}
+.card{
+  position:absolute; border-radius:28px; padding:20px;
+  background: var(--glass);
+  backdrop-filter: blur(18px) saturate(1.5); -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  border:1px solid color-mix(in srgb, var(--border) 90%, transparent);
+  box-shadow: 0 24px 48px -28px rgba(11,23,29,.34), inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
+  transition:.22s var(--ease);
+}
+html[data-theme="dark"] .card{
+  box-shadow: 0 28px 56px -30px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.045);
+}
+.card:hover{ transform:translateY(-3px) scale(1.012); box-shadow: 0 34px 64px -30px rgba(11,23,29,.42); }
+.card .cap{ font-family:var(--font-mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); margin-bottom:10px; }
+.c-hi{ left:50%; top:44%; transform:translate(-50%,-50%); width:330px; text-align:center; }
+.c-hi:hover{ transform:translate(-50%,-52%) scale(1.012); }
+.c-hi img{ width:96px; height:96px; border-radius:50%; display:block; margin:0 auto 14px; box-shadow:0 14px 28px -12px rgba(11,23,29,.3); }
+.c-hi .greet{ font-size:12px; color:var(--muted); font-family:var(--font-mono); letter-spacing:.06em; }
+.c-hi .name{ font-family:var(--font-display); font-size:30px; line-height:1.2; margin:4px 0 2px;
+  background:linear-gradient(100deg,var(--brand),var(--brand-2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.c-nav{ left:64px; top:96px; width:224px; }
+.c-nav .it{ display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:12px; font-size:14px; color:var(--muted); }
+.c-nav .it.on{ background: var(--brand-soft); color:var(--brand-ink); font-weight:500; }
+.c-nav .it i{ width:16px; height:16px; border-radius:5px; background:currentColor; opacity:.35; display:block; }
+.c-art{ left:64px; top:372px; width:252px; }
+.c-art .t{ font-size:14px; font-weight:550; line-height:1.5; margin-bottom:6px; }
+.c-art .d{ font-family:var(--font-mono); font-size:11px; color:var(--faint); }
+.c-clock{ right:96px; top:104px; width:216px; text-align:center; }
+.c-clock .hh{ font-family:var(--font-mono); font-size:30px; letter-spacing:.02em; font-variant-numeric:tabular-nums; }
+.c-clock .dd{ font-size:11.5px; color:var(--muted); margin-top:4px; }
+.c-art2{ right:96px; top:268px; width:232px; height:150px; padding:8px; }
+.c-art2 img{ width:100%; height:100%; object-fit:cover; border-radius:22px; display:block; }
+.c-social{ right:96px; top:452px; width:232px; display:flex; gap:10px; justify-content:center; }
+.c-social .s{ width:38px; height:38px; border-radius:12px; background:var(--surface-3); display:grid; place-items:center; color:var(--muted); }
+.c-like{ right:348px; top:470px; width:54px; height:54px; display:grid; place-items:center; color:#F43F5E; }
+.c-music{ left:64px; top:512px; width:300px; display:flex; align-items:center; gap:12px; padding:12px 16px; }
+.c-music .pl{ width:34px; height:34px; border-radius:50%; display:grid; place-items:center; flex-shrink:0;
+  background:linear-gradient(140deg,var(--brand-2),var(--brand)); color:var(--brand-fg); }
+.c-music .mt{ font-size:12.5px; font-weight:500; line-height:1.3; }
+.c-music .ms{ font-family:var(--font-mono); font-size:10.5px; color:var(--faint); margin-top:2px; }
+.c-list{ right:96px; top:512px; width:268px; }
+.c-list .li{ display:flex; gap:9px; align-items:baseline; font-size:12px; color:var(--muted); padding:4px 0; }
+.c-list .li b{ font-family:var(--font-mono); font-weight:400; font-size:10.5px; color:var(--faint); flex-shrink:0; }
+
+/* ============================================================
+   8. FOOTER
+   ============================================================ */
+.site-foot{ border-top:1px solid var(--border); margin-top:80px; padding:34px 0 52px; }
+.foot-inner{ max-width:var(--max-w); margin:0 auto; padding:0 28px; display:flex; gap:24px; flex-wrap:wrap; align-items:center; justify-content:space-between; font-size:13px; color:var(--faint); }
+.foot-inner .links{ display:flex; gap:18px; }
+.foot-inner a{ transition:.16s var(--ease); }
+.foot-inner a:hover{ color:var(--brand-ink); }
+
+/* ============================================================
+   9. DEMO BAR  (原型专用，不是设计的一部分)
+   ============================================================ */
+.demo{
+  position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:100;
+  display:flex; align-items:center; gap:6px; padding:6px; border-radius:16px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter:blur(20px); border:1px solid var(--border); box-shadow:var(--shadow-lg);
+  font-size:12.5px;
+}
+.demo .grp{ display:flex; gap:2px; padding:0 6px; border-right:1px solid var(--border); }
+.demo .grp:last-child{ border-right:0; }
+.demo button{ padding:6px 10px; border-radius:9px; color:var(--muted); transition:.14s var(--ease); white-space:nowrap; }
+.demo button:hover{ background:var(--surface-3); color:var(--fg); }
+.demo button[aria-pressed="true"]{ background:var(--brand); color:var(--brand-fg); font-weight:500; }
+.sw{ display:flex; gap:4px; padding:0 6px; border-right:1px solid var(--border); }
+.sw button{ width:26px; height:26px; padding:0; border-radius:9px; border:2px solid transparent; position:relative; }
+.sw button[data-palette="glacier"]{ background:#0EA5E9; }
+.sw button[data-palette="lagoon"]{ background:#0891B2; }
+.sw button[data-palette="mist"]{ background:#4E9BA8; }
+.sw button[aria-pressed="true"]{ border-color:var(--fg); box-shadow:0 0 0 2px var(--surface); }
+.demo-label{ font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; color:var(--faint); padding-left:6px; }
+
+@media (max-width: 900px){
+  .hero h1{ font-size:34px; }
+  .featured{ grid-template-columns:1fr; }
+  .featured .media{ min-height:180px; order:-1; }
+  .row{ grid-template-columns: 1fr; gap:10px; }
+  .row .date{ padding-top:0; }
+  .row .thumb{ display:none; }
+  .article-grid{ grid-template-columns:1fr; gap:0; padding:24px 0 64px; }
+  .toc{ display:none; }
+  .article-head h1{ font-size:27px; }
+  .prose{ font-size:16.5px; line-height:1.82; }
+  .hdr-inner{ padding:0 18px; gap:14px; }
+  .nav{ display:none; }
+  .wrap{ padding:0 18px; }
+}
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; animation:none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header class="site-header" id="hdr">
+  <div class="hdr-inner">
+    <a class="brand" href="#"><span class="dot">S</span><span>SUERYETO</span></a>
+    <nav class="nav">
+      <a href="#" aria-current="page">文章</a>
+      <a href="#">项目</a>
+      <a href="#">关于</a>
+      <a href="#">分享</a>
+      <a href="#">博客</a>
+      <button>更多
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </nav>
+    <div class="hdr-right">
+      <button class="icon-btn mobile-only" aria-label="打开导航菜单">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <button class="icon-btn" id="themeBtn" aria-label="切换深色模式">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div class="seg" role="group" aria-label="视图切换">
+        <button aria-pressed="true" data-screen="home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>流
+        </button>
+        <button aria-pressed="false" data-screen="desktop">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>桌面
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ═══════════ SCREEN: FLOW HOME ═══════════ -->
+<section id="screen-home" class="screen">
+  <div class="wrap">
+    <div class="hero">
+      <div class="eyebrow">SUERYETO · 个人博客</div>
+      <h1>写点代码，<br />也记点<em>想明白的事</em>。</h1>
+      <p>计算机专业在读。这里放着 11 篇算法与计算机网络的长文、一些做过的项目，以及几个没什么用但很好玩的小工具。</p>
+      <div class="hero-meta">
+        <a class="chip-link" href="#">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.8 2.7 1.3 3.4 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+          GitHub
+        </a>
+        <a class="chip-link" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1.5" fill="currentColor"/></svg>
+          RSS
+        </a>
+        <a class="chip-link" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          2658693309@qq.com
+        </a>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>精选</h2><div class="rule"></div></div>
+    <a class="featured" href="#">
+      <div class="txt">
+        <div class="kicker">学习 · 2026-08-03</div>
+        <h3>计算机网络基础</h3>
+        <p>从 OSI 七层到 TCP 三次握手，一份自己复习用的完整脉络笔记——把散落在各本书里的概念重新串成一条线。</p>
+        <div class="row-tags" style="display:flex;gap:12px;font-family:var(--font-mono);font-size:11.5px;color:var(--faint)">
+          <span>#计算机网络</span><span>#计算机科学</span>
+        </div>
+      </div>
+      <div class="media"><img src="../../public/blogs/cs-network/468d1c221914cb8f.jpg" alt="封面" /></div>
+    </a>
+
+    <div style="margin-top:56px">
+      <div class="section-head"><h2>全部文章</h2><div class="rule"></div></div>
+      <div class="filters" role="group" aria-label="按分类筛选">
+        <button class="filter" aria-pressed="true">全部 11</button>
+        <button class="filter" aria-pressed="false">Java算法 6</button>
+        <button class="filter" aria-pressed="false">学习 3</button>
+        <button class="filter" aria-pressed="false">总结 1</button>
+      </div>
+
+      <div class="archive">
+        <a class="row" href="#">
+          <div class="date"><strong>04-07</strong>2026</div>
+          <div>
+            <h3>BFS 广度优先搜索（蓝桥杯 Java B 组 冲刺版）
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </h3>
+            <p>BFS 的简要介绍，从队列模型讲到层序遍历与最短路的统一视角。</p>
+            <div class="tags"><span>BFS</span><span>蓝桥杯</span><span>Java</span></div>
+          </div>
+          <div class="thumb"><img src="https://images.sueryeto.cn/images/20260407001706527.webp" alt="" /></div>
+        </a>
+
+        <a class="row" href="#">
+          <div class="date"><strong>04-07</strong>2026</div>
+          <div>
+            <h3>Java 迭代器（Iterator）详解（蓝桥杯备考版）
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </h3>
+            <p>迭代器的用法、fail-fast 机制，以及为什么 for-each 里不能删元素。</p>
+            <div class="tags"><span>Java</span><span>迭代器</span><span>蓝桥杯</span></div>
+          </div>
+          <div class="thumb"><img src="https://images.sueryeto.cn/images/20260407001639459.webp" alt="" /></div>
+        </a>
+
+        <a class="row" href="#">
+          <div class="date"><strong>04-07</strong>2026</div>
+          <div>
+            <h3>蓝桥杯 Java B 组冲刺计划：4 天精准
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </h3>
+            <p>考前四天怎么分配时间，哪些模板必须背，哪些可以直接放弃。</p>
+            <div class="tags"><span>蓝桥杯</span><span>计划</span><span>冲刺</span></div>
+          </div>
+          <div class="thumb"><img src="https://images.sueryeto.cn/images/20260407001537629.webp" alt="" /></div>
+        </a>
+
+        <a class="row" href="#">
+          <div class="date"><strong>04-06</strong>2026</div>
+          <div>
+            <h3>用 DFS 解决排列、组合问题的核心思路（Java 版）
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </h3>
+            <p>同样一个回溯框架，改两行就能在排列和组合之间切换。</p>
+            <div class="tags"><span>DFS</span><span>排列组合</span><span>回溯</span></div>
+          </div>
+          <div class="thumb empty">无封面</div>
+        </a>
+
+        <a class="row" href="#">
+          <div class="date"><strong>04-01</strong>2026</div>
+          <div>
+            <h3>从一道经典的 N 皇后问题入门 DFS 算法
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </h3>
+            <p>用位运算优化列冲突判断，把 8 皇后跑到毫秒级。</p>
+            <div class="tags"><span>DFS</span><span>N皇后</span><span>位运算</span></div>
+          </div>
+          <div class="thumb empty">无封面</div>
+        </a>
+
+        <a class="row" href="#">
+          <div class="date"><strong>03-30</strong>2026</div>
+          <div>
+            <h3>从一道题总结一下 Java 的字符串相关语法
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </h3>
+            <p>String / StringBuilder / 字符数组三者的性能差异，以及常见坑。</p>
+            <div class="tags"><span>Java</span><span>字符串</span></div>
+          </div>
+          <div class="thumb empty">无封面</div>
+        </a>
+      </div>
+
+      <a class="more-link" href="#">
+        查看全部 11 篇
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SCREEN: ARTICLE ═══════════ -->
+<section id="screen-article" class="screen hidden">
+  <div class="progress" style="width:46%"></div>
+  <div class="wrap">
+    <div class="article-grid">
+      <aside class="toc">
+        <div class="toc-title">本页目录</div>
+        <ul>
+          <li><a class="active" href="#">为什么需要前缀和</a></li>
+          <li><a href="#">一维前缀和</a></li>
+          <li class="lvl3"><a href="#">构造方式</a></li>
+          <li class="lvl3"><a href="#">区间求和</a></li>
+          <li><a href="#">二维前缀和</a></li>
+          <li class="lvl3"><a href="#">容斥原理</a></li>
+          <li><a href="#">复杂度与边界</a></li>
+        </ul>
+      </aside>
+
+      <article>
+        <div class="article-head">
+          <a class="back" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+            全部文章
+          </a>
+          <h1>前缀和数组</h1>
+          <div class="article-meta">
+            <span>2026-03-24</span>
+            <span>·</span>
+            <span>约 6 分钟</span>
+            <span>·</span>
+            <span>1,842 字</span>
+            <div class="tags" style="margin-left:auto"><span>#Java算法</span><span>#前缀和</span></div>
+          </div>
+          <div class="cover"><img src="../../public/blogs/prefix-sum/9425b8d330891016.jpeg" alt="封面" /></div>
+        </div>
+
+        <div class="prose">
+          <p>前缀和是那种「一旦看懂就再也不会忘」的技巧，但真正写对边界的人在初学者里并不多。这篇文章从一个最朴素的区间求和问题出发，把它推到二维。</p>
+
+          <h2 id="why">为什么需要前缀和</h2>
+          <p>给定一个长度为 <code>n</code> 的数组，需要回答 <code>m</code> 次「区间 [l, r] 的元素和」。最直接的做法是每次遍历一遍，单次 <code>O(n)</code>，总复杂度 <code>O(nm)</code>。</p>
+          <p>当 <code>n = m = 10⁵</code> 时，这个做法会跑到 <strong>10¹⁰</strong> 次运算——远超评测机一秒的量级。而前缀和把每次询问降到 <code>O(1)</code>。</p>
+          <blockquote>核心思想：用一次 <code>O(n)</code> 的预处理，换取此后每一次查询的常数时间。</blockquote>
+
+          <h2 id="one">一维前缀和</h2>
+          <p>定义 <code>pre[i]</code> 表示前 <code>i</code> 个元素的和（下标从 1 开始，<code>pre[0] = 0</code>）。</p>
+<pre><code><span class="c">// 构造：O(n)</span>
+<span class="k">for</span> (<span class="k">int</span> i = <span class="n">1</span>; i &lt;= n; i++)
+    pre[i] = pre[i - <span class="n">1</span>] + a[i];
+
+<span class="c">// 查询 [l, r]：O(1)</span>
+<span class="k">int</span> sum = pre[r] - pre[l - <span class="n">1</span>];</code></pre>
+          <p>注意 <code>l - 1</code> 这一项：如果让下标从 0 开始，就要额外处理 <code>l = 0</code> 的越界。这也是为什么几乎所有模板都从 1 开始存。</p>
+
+          <h3 id="build">构造方式</h3>
+          <p>构造时一定要把 <code>pre[0]</code> 置为 0，否则前缀和会残留上一组测试数据。</p>
+
+          <h2 id="two">二维前缀和</h2>
+          <p>子矩阵求和的容斥公式是：</p>
+          <p style="text-align:center;font-family:var(--font-mono);font-size:15px;color:var(--fg)">sum = pre[x2][y2] − pre[x1−1][y2] − pre[x2][y1−1] + pre[x1−1][y1−1]</p>
+
+          <table>
+            <thead><tr><th>做法</th><th>预处理</th><th>单次查询</th><th>适用</th></tr></thead>
+            <tbody>
+              <tr><td>暴力</td><td>O(1)</td><td>O(n)</td><td>查询极少</td></tr>
+              <tr><td>前缀和</td><td>O(n)</td><td>O(1)</td><td>静态数组</td></tr>
+              <tr><td>树状数组</td><td>O(n log n)</td><td>O(log n)</td><td>带修改</td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="edge">复杂度与边界</h2>
+          <ul>
+            <li>前缀和只能处理<strong>静态</strong>数组，一旦有修改就要换数据结构；</li>
+            <li>数值可能溢出 <code>int</code>，累加时要开 <code>long</code>；</li>
+            <li>二维前缀和的数组要比原矩阵多开一圈。</li>
+          </ul>
+        </div>
+
+        <div class="article-foot">
+          <div class="pager">
+            <span class="lbl">下一篇</span>
+            <a href="#">差分数组 →</a>
+          </div>
+          <button class="like">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-9.3-9A5.1 5.1 0 0 1 12 6.4 5.1 5.1 0 0 1 21.3 12c-1.8 4.3-9.3 9-9.3 9z"/></svg>
+            128
+          </button>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SCREEN: DESKTOP ═══════════ -->
+<section id="screen-desktop" class="screen hidden">
+  <div class="wrap">
+    <div style="padding:36px 0 0;display:flex;align-items:baseline;gap:12px">
+      <h2 style="margin:0;font-size:12px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);font-family:var(--font-mono)">桌面模式 · 同一套 token，深色完整适配</h2>
+      <div class="rule" style="flex:1;height:1px;background:var(--border)"></div>
+    </div>
+
+    <div class="stage">
+      <div class="card c-nav">
+        <div class="cap">Navigate</div>
+        <div class="it on"><i></i>近期文章</div>
+        <div class="it"><i></i>我的项目</div>
+        <div class="it"><i></i>关于网站</div>
+        <div class="it"><i></i>推荐分享</div>
+        <div class="it"><i></i>优秀博客</div>
+      </div>
+
+      <div class="card c-hi">
+        <img src="../../public/images/avatar.png" alt="头像" />
+        <div class="greet">GOOD EVENING</div>
+        <div class="name">SUERYETO</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--faint);margin-top:6px">计算机专业在读 · 正在写 DFS</div>
+      </div>
+
+      <div class="card c-clock">
+        <div class="hh">21:24<span style="opacity:.35">:07</span></div>
+        <div class="dd">2026年10月31日 星期六</div>
+      </div>
+
+      <div class="card c-art2"><img src="../../public/images/art/65ce15c09e69bd71.jpg" alt="wall art" /></div>
+
+      <div class="card c-art">
+        <div class="cap">Latest</div>
+        <div class="t">计算机网络基础</div>
+        <div class="d">2026 / 08 / 03 · 学习</div>
+      </div>
+
+      <div class="card c-social">
+        <div class="s">GH</div><div class="s">Q</div><div class="s">✉</div><div class="s">B</div>
+      </div>
+
+      <div class="card c-like">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px"><path d="M12 21s-7.5-4.7-9.3-9A5.1 5.1 0 0 1 12 6.4 5.1 5.1 0 0 1 21.3 12c-1.8 4.3-9.3 9-9.3 9z"/></svg>
+      </div>
+
+      <div class="card c-music">
+        <div class="pl">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;margin-left:2px"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div>
+          <div class="mt">花与剑的轮舞</div>
+          <div class="ms">Rondeau des fleurs et des rapieres</div>
+        </div>
+      </div>
+
+      <div class="card c-list">
+        <div class="cap">Archive</div>
+        <div class="li"><b>08-03</b>计算机网络基础</div>
+        <div class="li"><b>04-07</b>BFS 广度优先搜索</div>
+        <div class="li"><b>04-06</b>用 DFS 解决排列组合</div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer class="site-foot">
+  <div class="foot-inner">
+    <div>© 2026 SUERYETO · 用 Next.js 搭建，内容存在 Git 里</div>
+    <div class="links">
+      <a href="#">RSS</a><a href="#">GitHub</a><a href="#">关于</a><a href="#">备案</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════ DEMO BAR ═══════════ -->
+<div class="demo" id="demo">
+  <div class="grp">
+    <button data-theme="light" aria-pressed="true">浅色</button>
+    <button data-theme="dark" aria-pressed="false">深色</button>
+  </div>
+  <div class="sw" role="group" aria-label="配色">
+    <button data-palette="glacier" aria-pressed="true" title="冰川蓝"></button>
+    <button data-palette="lagoon" aria-pressed="false" title="湖水青"></button>
+    <button data-palette="mist" aria-pressed="false" title="雾霭青"></button>
+  </div>
+  <div class="grp">
+    <button data-screen="home" aria-pressed="true">首页</button>
+    <button data-screen="article" aria-pressed="false">文章页</button>
+    <button data-screen="desktop" aria-pressed="false">桌面</button>
+  </div>
+  <span class="demo-label">PROTOTYPE</span>
+</div>
+
+<script>
+(function(){
+  var html = document.documentElement;
+  var params = new URLSearchParams(location.search);
+
+  function setTheme(t){
+    html.dataset.theme = t;
+    document.querySelectorAll('.demo [data-theme]').forEach(function(b){
+      b.setAttribute('aria-pressed', String(b.dataset.theme === t));
+    });
+  }
+  function setPalette(p){
+    html.dataset.palette = p;
+    document.querySelectorAll('.demo [data-palette]').forEach(function(b){
+      b.setAttribute('aria-pressed', String(b.dataset.palette === p));
+    });
+  }
+  function setScreen(s){
+    document.querySelectorAll('.screen').forEach(function(el){
+      el.classList.toggle('hidden', el.id !== 'screen-' + s);
+    });
+    document.querySelectorAll('.demo [data-screen]').forEach(function(b){
+      b.setAttribute('aria-pressed', String(b.dataset.screen === s));
+    });
+    var seg = document.querySelectorAll('.seg [data-screen]');
+    seg.forEach(function(b){
+      b.setAttribute('aria-pressed', String(b.dataset.screen === s));
+    });
+    window.scrollTo(0,0);
+  }
+
+  document.querySelectorAll('.demo [data-theme]').forEach(function(b){
+    b.addEventListener('click', function(){ setTheme(b.dataset.theme); });
+  });
+  document.querySelectorAll('.demo [data-palette]').forEach(function(b){
+    b.addEventListener('click', function(){ setPalette(b.dataset.palette); });
+  });
+  document.querySelectorAll('.demo [data-screen]').forEach(function(b){
+    b.addEventListener('click', function(){ setScreen(b.dataset.screen); });
+  });
+  document.querySelectorAll('.seg [data-screen]').forEach(function(b){
+    b.addEventListener('click', function(){ setScreen(b.dataset.screen); });
+  });
+  document.querySelectorAll('.filter').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.filter').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+      b.setAttribute('aria-pressed','true');
+    });
+  });
+  document.querySelectorAll('.toc a').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      document.querySelectorAll('.toc a').forEach(function(x){ x.classList.remove('active'); });
+      a.classList.add('active');
+    });
+  });
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    setTheme(html.dataset.theme === 'dark' ? 'light' : 'dark');
+  });
+
+  var hdr = document.getElementById('hdr');
+  window.addEventListener('scroll', function(){
+    hdr.classList.toggle('is-scrolled', window.scrollY > 8);
+  }, { passive:true });
+
+  // URL 参数：?theme=dark&palette=lagoon&screen=article&chrome=0
+  setTheme(params.get('theme') || 'light');
+  setPalette(params.get('palette') || 'glacier');
+  setScreen(params.get('screen') || 'home');
+  if (params.get('chrome') === '0') document.getElementById('demo').style.display = 'none';
+})();
+</script>
+</body>
+</html>

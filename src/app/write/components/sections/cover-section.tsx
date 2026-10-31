@@ -91,7 +91,7 @@ export function CoverSection({ delay = 0 }: CoverSectionProps) {
 				{!!coverPreviewUrl ? (
 					<img src={coverPreviewUrl} alt='cover preview' className='h-full w-full rounded-2xl object-cover' />
 				) : (
-					<div className='grid h-full w-full cursor-pointer place-items-center transition-colors hover:bg-white/60' onClick={handleClickUpload}>
+					<div className='grid h-full w-full cursor-pointer place-items-center transition-colors hover:bg-surface/60' onClick={handleClickUpload}>
 						<span className='text-3xl leading-none text-neutral-400'>+</span>
 					</div>
 				)}

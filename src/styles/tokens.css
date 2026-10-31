@@ -1,0 +1,141 @@
+/* ============================================================================
+ * tokens.css — 语义层
+ * ----------------------------------------------------------------------------
+ * 分三层：
+ *   1. 原始值（由 layout 注入的 --cfg-*，以及本文件里的 light/dark 常量）
+ *   2. 语义变量（--color-*，Tailwind @theme 产出，工具类引用它们而非写死值）
+ *   3. 组件 token（--card-*、--radius-*、--shadow-*）
+ *
+ * 关键约定：@theme 用「非 inline」形式声明 —— 这样 bg-brand / text-ink 这类
+ * 工具类生成的是 `var(--color-brand)` 而不是把值拷进去，才能在 .dark 下翻转。
+ * ========================================================================== */
+
+@theme {
+	/* 画布与承载面 */
+	--color-canvas: #f5f8f9;
+	--color-surface: #ffffff;
+	--color-surface2: #f8fbfc;
+	--color-elevated: #ffffff;
+
+	/* 描边 */
+	--color-hair: #e2e9ec;
+	--color-hair2: #cfdade;
+
+	/* 文字 */
+	--color-ink: #0b171d;
+	--color-ink2: #33454d;
+	--color-muted: #54676f;
+	--color-faint: #6b7e86;
+
+	/* 品牌衍生色 */
+	--color-brand-ink: #0369a1;
+	--color-brandsoft: rgb(14 165 233 / 0.1);
+
+	/* 阅读面 */
+	--color-reading: #ffffff;
+}
+
+/* ---------------------------------------------------------------------------
+ * 浅色：把站点配置色接进语义层
+ * ------------------------------------------------------------------------- */
+:root {
+	color-scheme: light;
+}
+
+/* ---------------------------------------------------------------------------
+ * 深色
+ * ------------------------------------------------------------------------- */
+html[data-theme='dark'] {
+	color-scheme: dark;
+
+	--color-canvas: #090f12;
+	--color-surface: #ffffff0f;
+	--color-surface2: #0c1519;
+	--color-elevated: #101a1f;
+
+	--color-hair: #ffffff1a;
+	--color-hair2: #2b3d46;
+
+	--color-ink: #e9f2f5;
+	--color-ink2: #b6c7ce;
+	--color-muted: #9bb0b8;
+	--color-faint: #7c929b;
+
+	--color-brand-ink: #7dd3fc;
+	--color-brandsoft: rgb(56 189 248 / 0.14);
+
+	--color-reading: #0f171b;
+
+	/* 站点配置色在深色下的自动提亮：改站点主色，深浅两套一起变 */
+	--color-brand: color-mix(in srgb, var(--cfg-brand, #0ea5e9) 70%, #fff);
+	--color-brand-secondary: color-mix(in srgb, var(--cfg-brand-2, #38bdf8) 60%, #fff);
+
+	/* 旧 token 一并翻转，未迁移的页面也能正常读 */
+	--color-bg: #090f12;
+	--color-card: #ffffff0f;
+	--color-border: #ffffff1a;
+	--color-article: #0f171b;
+	--color-primary: #e9f2f5;
+	--color-secondary: #9bb0b8;
+}
+
+/* ---------------------------------------------------------------------------
+ * 组件级 token
+ * ------------------------------------------------------------------------- */
+:root {
+	--radius-card: 24px;
+	--radius-md: 14px;
+	--radius-sm: 10px;
+	--radius-pill: 999px;
+
+	/* .card 的底色走间接变量，深色下换成更实的玻璃 */
+	--card-bg: var(--color-card);
+
+	--shadow-sm: 0 1px 2px rgb(11 23 29 / 0.05);
+	--shadow-md:
+		0 1px 2px rgb(11 23 29 / 0.04), 0 10px 28px -14px rgb(11 23 29 / 0.16);
+	--shadow-lg:
+		0 2px 4px rgb(11 23 29 / 0.03), 0 24px 64px -24px rgb(11 23 29 / 0.22);
+
+	--glass: rgb(255 255 255 / 0.72);
+	--ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+	--font-mono:
+		ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+}
+
+html[data-theme='dark'] {
+	--shadow-sm: 0 1px 2px rgb(0 0 0 / 0.5);
+	--shadow-md:
+		0 1px 2px rgb(0 0 0 / 0.45), 0 12px 32px -16px rgb(0 0 0 / 0.8);
+	--shadow-lg:
+		0 2px 6px rgb(0 0 0 / 0.5), 0 32px 72px -28px rgb(0 0 0 / 0.9);
+	--glass: rgb(16 26 31 / 0.72);
+}
+
+/* 桌面模式下，文章流首屏先隐藏，避免切换瞬间闪一下 */
+html[data-view='desktop'] [data-flow-home] {
+	visibility: hidden;
+}
+
+/* 桌面模式的背景是一张照片，深色下不能用 6% 白（会糊在亮图上），
+   所以卡片底色走一层间接变量：浅色=配置卡片色，深色=更实的暗色玻璃。 */
+html[data-theme='dark'] {
+	--card-bg: var(--glass);
+}
+
+/* 同理：桌面模式下卡片内的次级文字需要在玻璃层上仍然可读 */
+html[data-theme='dark'] [data-desktop-home] {
+	--color-secondary: #b9cbd1;
+}
+
+/* 主题切换时只让背景/文字做过渡，避免布局属性动画 */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+	transition:
+		background-color 0.22s var(--ease),
+		border-color 0.22s var(--ease),
+		color 0.22s var(--ease) !important;
+}

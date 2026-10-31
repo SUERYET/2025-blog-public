@@ -25,21 +25,22 @@ export default function GridView({ shares, isEditMode = false, onUpdate, onDelet
 	})
 
 	return (
-		<div className='mx-auto w-full max-w-7xl px-6 pt-24 pb-12'>
+		<div className='w-full pb-12'>
 			<div className='mb-8 space-y-4'>
 				<input
 					type='text'
 					placeholder='搜索资源...'
+					aria-label='搜索分享'
 					value={searchTerm}
 					onChange={e => setSearchTerm(e.target.value)}
-					className='focus:ring-brand mx-auto block w-full max-w-md rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:outline-none'
+					className='border-hair bg-surface2 focus:border-brand/50 mx-auto block w-full max-w-md rounded-full border px-4 py-2.5 text-[14px] outline-none'
 				/>
 
-				<div className='flex flex-wrap justify-center gap-2'>
+				<div className='flex flex-wrap justify-center gap-1.5'>
 					<button
 						onClick={() => setSelectedTag('all')}
 						className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
-							selectedTag === 'all' ? 'bg-brand text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+							selectedTag === 'all' ? 'bg-brand text-white' : 'bg-hair2 text-ink2 hover:bg-hair2'
 						}`}>
 						全部
 					</button>
@@ -48,7 +49,7 @@ export default function GridView({ shares, isEditMode = false, onUpdate, onDelet
 							key={tag}
 							onClick={() => setSelectedTag(tag)}
 							className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
-								selectedTag === tag ? 'bg-brand text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+								selectedTag === tag ? 'bg-brand text-white' : 'bg-hair2 text-ink2 hover:bg-hair2'
 							}`}>
 							{tag}
 						</button>
@@ -63,7 +64,7 @@ export default function GridView({ shares, isEditMode = false, onUpdate, onDelet
 			</div>
 
 			{filteredShares.length === 0 && (
-				<div className='mt-12 text-center text-gray-500'>
+				<div className='mt-12 text-center text-muted'>
 					<p>没有找到相关资源</p>
 				</div>
 			)}

@@ -86,7 +86,7 @@ export function CategoryModal({
 						新增分类
 					</button>
 				</div>
-				<div className='flex flex-wrap gap-2 rounded-lg bg-white/60 p-3 text-sm'>
+				<div className='flex flex-wrap gap-2 rounded-lg bg-surface/60 p-3 text-sm'>
 					{categoryList.length === 0 ? (
 						<span className='text-secondary'>暂无分类</span>
 					) : (
@@ -113,9 +113,9 @@ export function CategoryModal({
 						))
 					)}
 				</div>
-				<div className='max-h-[360px] space-y-2 overflow-y-auto rounded-xl bg-white/60 p-3'>
+				<div className='max-h-[360px] space-y-2 overflow-y-auto rounded-xl bg-surface/60 p-3'>
 					{editableItems.map(item => (
-						<div key={item.slug} className='flex flex-col gap-2 rounded-lg border bg-white/80 px-3 py-2 sm:flex-row sm:items-center sm:justify-between'>
+						<div key={item.slug} className='flex flex-col gap-2 rounded-lg border bg-surface/80 px-3 py-2 sm:flex-row sm:items-center sm:justify-between'>
 							<div className='text-sm font-medium'>
 								{item.title || item.slug}
 								<span className='text-secondary ml-2 text-xs'>{dayjs(item.date).format('YYYY-MM-DD')}</span>

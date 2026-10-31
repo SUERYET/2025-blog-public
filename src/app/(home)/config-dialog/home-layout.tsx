@@ -39,7 +39,8 @@ export function HomeLayout({ cardStylesData, setCardStylesData, onClose }: HomeL
 	}
 
 	const handleReset = () => {
-		setCardStylesData(cardStylesDefault as CardStyles)
+		// default 文件里 offsetX/offsetY 全是 null，类型推导和 card-styles.json 不一致，这里显式收口
+		setCardStylesData(cardStylesDefault as unknown as CardStyles)
 	}
 
 	return (
@@ -61,7 +62,7 @@ export function HomeLayout({ cardStylesData, setCardStylesData, onClose }: HomeL
 			</div>
 			<table className='mt-3 w-full border-collapse text-sm whitespace-nowrap'>
 				<thead>
-					<tr className='border-b text-xs text-gray-500'>
+					<tr className='border-b text-xs text-muted'>
 						<th className='px-3 py-2 text-left font-medium'>卡片</th>
 						<th className='px-3 py-2 text-left font-medium'>宽度</th>
 						<th className='px-3 py-2 text-left font-medium'>高度</th>
@@ -93,7 +94,7 @@ export function HomeLayout({ cardStylesData, setCardStylesData, onClose }: HomeL
 										className='no-spinner bg-secondary/10 w-full rounded-lg border px-3 py-1.5 text-xs'
 									/>
 								) : (
-									<span className='text-xs text-gray-400'>-</span>
+									<span className='text-xs text-faint'>-</span>
 								)}
 							</td>
 							<td className='px-3 py-2'>
@@ -113,7 +114,7 @@ export function HomeLayout({ cardStylesData, setCardStylesData, onClose }: HomeL
 										className='no-spinner bg-secondary/10 w-full rounded-lg border px-3 py-1.5 text-xs'
 									/>
 								) : (
-									<span className='text-xs text-gray-400'>-</span>
+									<span className='text-xs text-faint'>-</span>
 								)}
 							</td>
 							<td className='px-3 py-2'>
@@ -181,7 +182,7 @@ export function HomeLayout({ cardStylesData, setCardStylesData, onClose }: HomeL
 											}
 										}))
 									}
-									className='accent-brand h-4 w-4 rounded border-gray-300'
+									className='accent-brand h-4 w-4 rounded border-hair2'
 								/>
 							</td>
 						</tr>

@@ -144,7 +144,7 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 	return (
 		<div>
 			<label className='mb-2 block text-sm font-medium'>社交按钮</label>
-			{buttons.length === 0 && <p className='mb-2 text-xs text-gray-500'>暂未配置社交按钮，点击下方「+」添加。</p>}
+			{buttons.length === 0 && <p className='mb-2 text-xs text-muted'>暂未配置社交按钮，点击下方「+」添加。</p>}
 			<div className='space-y-2 whitespace-nowrap'>
 				{sortedButtons.map((button, index) => (
 					<div key={button.id} className='flex items-center gap-2'>
@@ -264,14 +264,14 @@ export function SocialButtonsSection({ formData, setFormData, socialButtonImageU
 								type='button'
 								onClick={() => handleMoveButton(button.id, 'up')}
 								disabled={index === 0}
-								className='rounded px-2 py-1 text-xs hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-300'>
+								className='rounded px-2 py-1 text-xs hover:bg-surface2 disabled:cursor-not-allowed disabled:text-faint'>
 								↑
 							</button>
 							<button
 								type='button'
 								onClick={() => handleMoveButton(button.id, 'down')}
 								disabled={index === sortedButtons.length - 1}
-								className='rounded px-2 py-1 text-xs hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-300'>
+								className='rounded px-2 py-1 text-xs hover:bg-surface2 disabled:cursor-not-allowed disabled:text-faint'>
 								↓
 							</button>
 							<button type='button' onClick={() => handleRemoveButton(button.id)} className='rounded px-2 py-1 text-xs text-red-500 hover:bg-red-50'>

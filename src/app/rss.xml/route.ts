@@ -4,6 +4,7 @@ import path from 'node:path'
 import siteContent from '@/config/site-content.json'
 import blogIndex from '@/../public/blogs/index.json'
 import type { BlogIndexItem } from '@/app/blog/types'
+import { publicPosts } from '@/lib/blog-visibility'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.yysuni.com'
 const FEED_PATH = '/rss.xml'
@@ -93,8 +94,7 @@ export function GET(): Response {
 	const title = siteContent.meta?.title || '2025 Blog'
 	const description = siteContent.meta?.description || 'Latest updates from 2025 Blog'
 
-	const items = blogs
-		.filter(item => item?.slug)
+	const items = publicPosts(blogs)
 		.map(serializeItem)
 		.join('')
 

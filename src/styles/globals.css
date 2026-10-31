@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import 'katex/dist/katex.min.css';
 @import './theme.css';
+@import './tokens.css';
 @import './article.css';
 
 @plugin 'tailwindcss-animate';
@@ -16,13 +17,29 @@
 	html {
 		@apply text-primary bg-bg h-full leading-tight;
 		scroll-behavior: smooth;
+		cursor:
+			url(/images/cursor.svg) 2 1,
+			auto;
 	}
 
 	body {
-		@apply h-full bg-none;
+		/* 不要给 body 固定高度：那会把 sticky 顶栏的包含块压成一个视口高，
+		   滚过一屏后顶栏就"用完了空间"直接消失。 */
+		@apply bg-none;
+		min-height: 100dvh;
 	}
 	* {
 		@apply border-border;
+	}
+
+	::selection {
+		background: color-mix(in srgb, var(--color-brand) 22%, transparent);
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--color-brand);
+		outline-offset: 3px;
+		border-radius: 6px;
 	}
 
 	input:focus,
@@ -87,12 +104,13 @@
 	/* Sonner Toaster styles */
 	html li[data-sonner-toast][data-styled='true'] {
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-		@apply bg-white/40! backdrop-blur;
+		@apply bg-surface/40! backdrop-blur;
 	}
 }
 
 @utility card {
-	@apply bg-card absolute rounded-[40px] border p-6;
+	@apply absolute rounded-[40px] border p-6;
+	background-color: var(--card-bg);
 	box-shadow:
 		0 40px 50px -32px rgba(0, 0, 0, 0.05),
 		inset 0 0 20 rgba(255, 255, 255, 0.25);

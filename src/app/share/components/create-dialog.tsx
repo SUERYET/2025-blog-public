@@ -86,8 +86,8 @@ export default function CreateDialog({ share, onClose, onSave }: CreateDialogPro
 								</div>
 							</>
 						) : (
-							<div className='flex h-16 w-16 items-center justify-center rounded-xl bg-gray-200'>
-								<Plus className='h-6 w-6 text-gray-500' />
+							<div className='flex h-16 w-16 items-center justify-center rounded-xl bg-hair2'>
+								<Plus className='h-6 w-6 text-muted' />
 							</div>
 						)}
 					</div>
@@ -127,11 +127,11 @@ export default function CreateDialog({ share, onClose, onSave }: CreateDialogPro
 						value={tagsInput}
 						onChange={e => handleTagsChange(e.target.value)}
 						placeholder='标签，用逗号分隔（如：图片, 工具）'
-						className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none'
+						className='w-full rounded-md border border-hair2 bg-surface2 px-3 py-2 text-sm focus:outline-none'
 					/>
 					<div className='mt-2 flex flex-wrap gap-1.5'>
 						{formData.tags.map(tag => (
-							<span key={tag} className='rounded-full bg-secondary/10 px-2.5 py-0.5 text-xs text-gray-600'>
+							<span key={tag} className='rounded-full bg-secondary/10 px-2.5 py-0.5 text-xs text-muted'>
 								{tag}
 							</span>
 						))}
@@ -149,7 +149,7 @@ export default function CreateDialog({ share, onClose, onSave }: CreateDialogPro
 
 			{/* 操作按钮 */}
 			<div className='mt-6 flex gap-3'>
-				<button onClick={onClose} className='flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm transition-colors hover:bg-gray-50'>
+				<button onClick={onClose} className='flex-1 rounded-lg border border-hair2 bg-surface px-4 py-2 text-sm transition-colors hover:bg-surface2'>
 					取消
 				</button>
 				<button onClick={handleSubmit} className='brand-btn flex-1 justify-center px-4'>

@@ -193,7 +193,7 @@ export default function ClockPage() {
 									max='23'
 									value={timerInput.hours}
 									onChange={e => setTimerInput({ ...timerInput, hours: Math.max(0, Math.min(23, parseInt(e.target.value) || 0)) })}
-									className='no-spinner w-20 rounded-xl border bg-white/60 px-4 py-3 text-center text-2xl font-bold backdrop-blur-sm focus:bg-white/80'
+									className='no-spinner w-20 rounded-xl border bg-surface/60 px-4 py-3 text-center text-2xl font-bold backdrop-blur-sm focus:bg-surface/80'
 								/>
 							</div>
 							<div className='text-secondary mt-8 text-2xl font-bold'>:</div>
@@ -205,7 +205,7 @@ export default function ClockPage() {
 									max='59'
 									value={timerInput.minutes}
 									onChange={e => setTimerInput({ ...timerInput, minutes: Math.max(0, Math.min(59, parseInt(e.target.value) || 0)) })}
-									className='no-spinner w-20 rounded-xl border bg-white/60 px-4 py-3 text-center text-2xl font-bold backdrop-blur-sm focus:bg-white/80'
+									className='no-spinner w-20 rounded-xl border bg-surface/60 px-4 py-3 text-center text-2xl font-bold backdrop-blur-sm focus:bg-surface/80'
 								/>
 							</div>
 							<div className='text-secondary mt-8 text-2xl font-bold'>:</div>
@@ -217,7 +217,7 @@ export default function ClockPage() {
 									max='59'
 									value={timerInput.seconds}
 									onChange={e => setTimerInput({ ...timerInput, seconds: Math.max(0, Math.min(59, parseInt(e.target.value) || 0)) })}
-									className='no-spinner w-20 rounded-xl border bg-white/60 px-4 py-3 text-center text-2xl font-bold backdrop-blur-sm focus:bg-white/80'
+									className='no-spinner w-20 rounded-xl border bg-surface/60 px-4 py-3 text-center text-2xl font-bold backdrop-blur-sm focus:bg-surface/80'
 								/>
 							</div>
 						</div>
@@ -232,7 +232,7 @@ export default function ClockPage() {
 							whileTap={{ scale: 0.95 }}
 							onClick={handleLap}
 							disabled={!isRunning}
-							className='flex h-16 w-16 items-center justify-center rounded-full border bg-white/60 text-sm font-medium backdrop-blur-sm transition-all hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50'>
+							className='flex h-16 w-16 items-center justify-center rounded-full border bg-surface/60 text-sm font-medium backdrop-blur-sm transition-all hover:bg-surface/80 disabled:cursor-not-allowed disabled:opacity-50'>
 							计次
 						</motion.button>
 					)}
@@ -251,7 +251,7 @@ export default function ClockPage() {
 						whileTap={{ scale: 0.95 }}
 						onClick={handleReset}
 						disabled={isRunning && mode === 'stopwatch'}
-						className='flex h-16 w-16 items-center justify-center rounded-full border bg-white/60 backdrop-blur-sm transition-all hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50'>
+						className='flex h-16 w-16 items-center justify-center rounded-full border bg-surface/60 backdrop-blur-sm transition-all hover:bg-surface/80 disabled:cursor-not-allowed disabled:opacity-50'>
 						<RotateCcw className='h-5 w-5' />
 					</motion.button>
 				</div>

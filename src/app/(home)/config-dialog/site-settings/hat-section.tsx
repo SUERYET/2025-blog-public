@@ -30,7 +30,7 @@ export function HatSection({ formData, setFormData }: HatSectionProps) {
 							<button
 								type='button'
 								onClick={() => handleSetHatIndex(index)}
-								className={`block w-full overflow-hidden rounded-xl border bg-white/60 transition-all ${
+								className={`block w-full overflow-hidden rounded-xl border bg-surface/60 transition-all ${
 									isActive ? 'ring-brand shadow-md ring-2' : 'hover:border-brand/60'
 								}`}>
 								<img src={`/images/hats/${index}.webp`} alt={`hat ${index}`} className='h-20 w-full object-contain' />

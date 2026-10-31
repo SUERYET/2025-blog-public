@@ -43,7 +43,7 @@ export default function ArticleCard() {
 						{blog.cover ? (
 							<img src={blog.cover} alt='cover' className='mr-3 h-12 w-12 shrink-0 rounded-xl border object-cover' />
 						) : (
-							<div className='text-secondary mr-3 grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-white/60'>+</div>
+							<div className='text-secondary mr-3 grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-surface/60'>+</div>
 						)}
 						<div className='flex-1'>
 							<h3 className='line-clamp-1 text-sm font-medium'>{blog.title || blog.slug}</h3>

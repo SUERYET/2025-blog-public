@@ -1,13 +1,14 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { motion } from 'motion/react'
+import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import GridView, { type Blogger } from './grid-view'
 import CreateDialog from './components/create-dialog'
 import { pushBloggers } from './services/push-bloggers'
-import { useAuthStore } from '@/hooks/use-auth'
 import { useConfigStore } from '@/app/(home)/stores/config-store'
+import { Container } from '@/components/ui/container'
+import { Button } from '@/components/ui/button'
+import { EditToolbar } from '@/components/edit-toolbar'
 import initialList from './list.json'
 import type { AvatarItem } from './components/avatar-upload-dialog'
 
@@ -19,9 +20,7 @@ export default function Page() {
 	const [editingBlogger, setEditingBlogger] = useState<Blogger | null>(null)
 	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 	const [avatarItems, setAvatarItems] = useState<Map<string, AvatarItem>>(new Map())
-	const keyInputRef = useRef<HTMLInputElement>(null)
 
-	const { isAuth, setPrivateKey } = useAuthStore()
 	const { siteContent } = useConfigStore()
 	const hideEditButton = siteContent.hideEditButton ?? false
 
@@ -56,26 +55,6 @@ export default function Page() {
 		}
 	}
 
-	const handleChoosePrivateKey = async (file: File) => {
-		try {
-			const text = await file.text()
-			setPrivateKey(text)
-			// 选择文件后自动保存
-			await handleSave()
-		} catch (error) {
-			console.error('Failed to read private key:', error)
-			toast.error('读取密钥文件失败')
-		}
-	}
-
-	const handleSaveClick = () => {
-		if (!isAuth) {
-			keyInputRef.current?.click()
-		} else {
-			handleSave()
-		}
-	}
-
 	const handleSave = async () => {
 		setIsSaving(true)
 
@@ -103,8 +82,6 @@ export default function Page() {
 		setIsEditMode(false)
 	}
 
-	const buttonText = isAuth ? '保存' : '导入密钥'
-
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (!isEditMode && (e.ctrlKey || e.metaKey) && e.key === ',') {
@@ -121,54 +98,32 @@ export default function Page() {
 
 	return (
 		<>
-			<input
-				ref={keyInputRef}
-				type='file'
-				accept='.pem'
-				className='hidden'
-				onChange={async e => {
-					const f = e.target.files?.[0]
-					if (f) await handleChoosePrivateKey(f)
-					if (e.currentTarget) e.currentTarget.value = ''
-				}}
+			<EditToolbar
+				editing={isEditMode}
+				saving={isSaving}
+				hideEditButton={hideEditButton}
+				onEdit={() => setIsEditMode(true)}
+				onCancel={handleCancel}
+				onSave={handleSave}
+				extra={
+					<Button size='sm' onClick={handleAdd}>
+						添加
+					</Button>
+				}
 			/>
 
-			<GridView bloggers={bloggers} isEditMode={isEditMode} onUpdate={handleUpdate} onDelete={handleDelete} />
+			<Container className='pb-20'>
+				<header className='max-w-[716px] pt-14 pb-8'>
+					<div className='text-faint mb-4 flex items-center gap-2 font-mono text-[11.5px] tracking-[0.14em] uppercase'>
+						<span className='bg-hair2 block h-px w-5' />
+						优秀博客
+					</div>
+					<h1 className='text-ink mb-3 text-[32px] font-semibold tracking-[-0.028em] sm:text-[38px]'>值得订阅的人</h1>
+					<p className='text-muted text-[15px]'>{bloggers.length} 个长期在更新的博客</p>
+				</header>
 
-			<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className='absolute top-4 right-6 flex gap-3 max-sm:hidden'>
-				{isEditMode ? (
-					<>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={handleCancel}
-							disabled={isSaving}
-							className='rounded-xl border bg-white/60 px-6 py-2 text-sm'>
-							取消
-						</motion.button>
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={handleAdd}
-							className='rounded-xl border bg-white/60 px-6 py-2 text-sm'>
-							添加
-						</motion.button>
-						<motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleSaveClick} disabled={isSaving} className='brand-btn px-6'>
-							{isSaving ? '保存中...' : buttonText}
-						</motion.button>
-					</>
-				) : (
-					!hideEditButton && (
-						<motion.button
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={() => setIsEditMode(true)}
-							className='bg-card rounded-xl border px-6 py-2 text-sm backdrop-blur-sm transition-colors hover:bg-white/80'>
-							编辑
-						</motion.button>
-					)
-				)}
-			</motion.div>
+				<GridView bloggers={bloggers} isEditMode={isEditMode} onUpdate={handleUpdate} onDelete={handleDelete} />
+			</Container>
 
 			{isCreateDialogOpen && <CreateDialog blogger={editingBlogger} onClose={() => setIsCreateDialogOpen(false)} onSave={handleSaveBlogger} />}
 		</>

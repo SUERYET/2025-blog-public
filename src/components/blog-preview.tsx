@@ -1,57 +1,104 @@
 'use client'
 
+import Link from 'next/link'
 import { motion } from 'motion/react'
-import { INIT_DELAY } from '@/consts'
+import { ArrowLeft } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { useMarkdownRender } from '@/hooks/use-markdown-render'
-import { useSize } from '@/hooks/use-size'
-import { BlogSidebar } from '@/components/blog-sidebar'
-import { useConfigStore } from '@/app/(home)/stores/config-store'
+import { Container } from '@/components/ui/container'
+import { ArticleToc, useActiveHeading, readingStats } from '@/components/article-chrome'
+import { tagHref } from '@/components/post-row'
+import LikeButton from '@/components/like-button'
 
 type BlogPreviewProps = {
 	markdown: string
 	title: string
 	tags: string[]
 	date: string
-	summary?: string
-	cover?: string
 	slug?: string
+	/** 文章底部的上一篇/下一篇，写作预览里不传 */
+	footer?: ReactNode
+	backHref?: string
 }
 
-export function BlogPreview({ markdown, title, tags, date, summary, cover, slug }: BlogPreviewProps) {
-	const { maxSM: isMobile } = useSize()
-	const { content, toc, loading } = useMarkdownRender(markdown)
-	const { siteContent } = useConfigStore()
-	const summaryInContent = siteContent.summaryInContent ?? false
+export function ArticleSkeleton() {
+	return (
+		<Container className='pb-20'>
+			<div className='mx-auto w-full max-w-[716px] pt-16'>
+				<div className='bg-surface2 mb-4 h-9 w-3/4 animate-pulse rounded' />
+				<div className='bg-surface2 mb-10 h-4 w-1/3 animate-pulse rounded' />
+				<div className='space-y-3'>
+					{[0, 1, 2, 3, 4].map(index => (
+						<div key={index} className='bg-surface2 h-4 animate-pulse rounded' style={{ width: `${92 - index * 6}%` }} />
+					))}
+				</div>
+			</div>
+		</Container>
+	)
+}
 
-	if (loading) {
-		return <div className='text-secondary flex h-full items-center justify-center text-sm'>渲染中...</div>
-	}
+export function BlogPreview({ markdown, title, tags, date, slug, footer, backHref }: BlogPreviewProps) {
+	const { content, toc, loading } = useMarkdownRender(markdown)
+	const activeId = useActiveHeading(toc)
+	const { minutes, chars } = readingStats(markdown)
+
+	if (loading) return <ArticleSkeleton />
 
 	return (
-		<div className='mx-auto flex max-w-[1140px] justify-center gap-6 px-6 pt-28 pb-12 max-sm:px-0'>
-			<motion.article
-				initial={{ opacity: 0 }}
-				animate={{ opacity: 1 }}
-				transition={{ delay: INIT_DELAY }}
-				className='card bg-article static flex-1 overflow-auto rounded-xl p-8'>
-				<div>
-					<div className='text-center text-2xl font-semibold'>{title}</div>
+		<Container className='pb-20'>
+			<div className='mx-auto flex w-full max-w-[1010px] gap-14 pt-10'>
+				<aside className='hidden w-[188px] shrink-0 lg:block'>
+					<ArticleToc toc={toc} activeId={activeId} />
+				</aside>
 
-					<div className='text-secondary mt-4 flex flex-wrap items-center justify-center gap-3 px-8 text-center text-sm'>
-						{tags.map(t => (
-							<span key={t}>#{t}</span>
-						))}
+				<motion.article
+					initial={{ opacity: 0, y: 8 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.35 }}
+					className='min-w-0 flex-1 lg:max-w-[716px]'>
+					{backHref && (
+						<Link href={backHref} className='text-muted hover:text-brand-ink mb-6 inline-flex items-center gap-1.5 text-[13px] transition-colors'>
+							<ArrowLeft className='size-3.5' aria-hidden />
+							全部文章
+						</Link>
+					)}
+
+					<header>
+						<h1 className='text-ink mb-5 text-[30px] leading-[1.32] font-semibold tracking-[-0.026em] sm:text-[36px]'>{title}</h1>
+
+						<div className='text-faint border-hair flex flex-wrap items-center gap-x-3 gap-y-2 border-b pb-6 font-mono text-[12px]'>
+							<span>{date}</span>
+							<span aria-hidden>·</span>
+							<span>约 {minutes} 分钟</span>
+							<span aria-hidden>·</span>
+							<span>{chars.toLocaleString()} 字</span>
+
+							{tags.length > 0 && (
+								<div className='ml-auto flex flex-wrap gap-2.5'>
+									{tags.map(tag => (
+										<Link key={tag} href={tagHref(tag)} className='text-brand-ink hover:underline'>
+											#{tag}
+										</Link>
+									))}
+								</div>
+							)}
+						</div>
+
+					</header>
+
+					<div id='article-body' className='prose mt-9'>
+						{content}
 					</div>
 
-					<div className='text-secondary mt-3 text-center text-sm'>{date}</div>
+					{slug && (
+						<div className='border-hair mt-12 flex justify-end border-t pt-7'>
+							<LikeButton slug={slug} delay={600} />
+						</div>
+					)}
 
-					{summary && summaryInContent && <div className='text-secondary mt-6 cursor-text text-center text-sm'>“{summary}”</div>}
-
-					<div className='prose mt-6 max-w-none cursor-text'>{content}</div>
-				</div>
-			</motion.article>
-
-			{!isMobile && <BlogSidebar cover={cover} summary={summary} toc={toc} slug={slug} />}
-		</div>
+					{footer}
+				</motion.article>
+			</div>
+		</Container>
 	)
 }

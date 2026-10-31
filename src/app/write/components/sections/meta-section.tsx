@@ -52,9 +52,9 @@ export function MetaSection({ delay = 0 }: MetaSectionProps) {
 						id='hidden-check'
 						checked={form.hidden || false}
 						onChange={e => updateForm({ hidden: e.target.checked })}
-						className='h-4 w-4 rounded border-gray-300'
+						className='h-4 w-4 rounded border-hair2'
 					/>
-					<label htmlFor='hidden-check' className='cursor-pointer text-sm text-gray-600 select-none'>
+					<label htmlFor='hidden-check' className='cursor-pointer text-sm text-muted select-none'>
 						隐藏此文章（仅管理员可见）
 					</label>
 				</div>

@@ -5,14 +5,14 @@
 		"username": "SUERYETO"
 	},
 	"theme": {
-		"colorBrand": "#35adbf",
-		"colorPrimary": "#334f52",
-		"colorSecondary": "#7b888e",
-		"colorBrandSecondary": "#1fc9e7",
-		"colorBg": "#eeeeee",
-		"colorBorder": "#ffffff",
-		"colorCard": "#ffffff66",
-		"colorArticle": "#ffffffcc"
+		"colorBrand": "#0EA5E9",
+		"colorPrimary": "#0B171D",
+		"colorSecondary": "#54676F",
+		"colorBrandSecondary": "#38BDF8",
+		"colorBg": "#F5F8F9",
+		"colorBorder": "#E2E9EC",
+		"colorCard": "#ffffffd9",
+		"colorArticle": "#ffffff"
 	},
 	"backgroundColors": [
 		"#EDDD62",
