@@ -82,6 +82,12 @@ export async function renderMarkdown(markdown: string): Promise<MarkdownRenderRe
 	}
 
 	renderer.code = (token: Tokens.Code) => {
+		// mermaid：只留一个带源码的占位标签，真正的渲染在客户端
+		if ((token as unknown as { __mermaid?: boolean }).__mermaid) {
+			const escaped = token.text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+			return `<div data-mermaid="${escaped}"></div>`
+		}
+
 		// Check if this code block was pre-processed
 		const codeData = codeBlockMap.get(token.text)
 		if (codeData) {
@@ -220,6 +226,13 @@ export async function renderMarkdown(markdown: string): Promise<MarkdownRenderRe
 	for (const token of tokens) {
 		if (token.type === 'code') {
 			const codeToken = token as Tokens.Code
+
+			// mermaid 图表不走高亮，交给客户端的 MermaidBlock 渲染
+			if ((codeToken.lang || '').trim().toLowerCase() === 'mermaid') {
+				;(codeToken as unknown as { __mermaid?: boolean }).__mermaid = true
+				continue
+			}
+
 			const originalCode = codeToken.text
 			const key = `__SHIKI_CODE_${codeBlockMap.size}__`
 

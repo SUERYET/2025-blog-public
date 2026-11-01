@@ -275,3 +275,35 @@ html[data-theme='dark'] .prose pre.shiki span {
 .prose [id] {
 	scroll-margin-top: 104px;
 }
+
+/* --- mermaid 图表 --- */
+.prose .mermaid-block {
+	margin: 1.8em 0;
+}
+
+.prose .mermaid-svg {
+	display: flex;
+	justify-content: center;
+	overflow-x: auto;
+	padding: 8px 0;
+}
+
+.prose .mermaid-svg svg {
+	max-width: 100%;
+	height: auto;
+}
+
+.prose .mermaid-loading {
+	color: var(--color-muted);
+	font-size: 13px;
+	border: 1px dashed var(--color-hair);
+	border-radius: 12px;
+	padding: 24px;
+	text-align: center;
+}
+
+.prose .mermaid-error {
+	color: #dc2626;
+	font-size: 12px;
+	margin-top: 8px;
+}
