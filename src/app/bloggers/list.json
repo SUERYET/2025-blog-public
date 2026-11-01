@@ -3,7 +3,7 @@
 		"name": "阮一峰的网络日志",
 		"avatar": "/images/blogger/fe25259da8e3609b.png",
 		"url": "https://www.ruanyifeng.com/blog/archives.html",
-		"description": "经典必看，每周更新。无聊是看新闻、还是学习、还是拓展眼界，都是能其中获取到乐趣的。还有很多网友的每周留言。这就是 blog 的含金量。",
+		"description": "阮一峰的网络日志",
 		"stars": 5
 	},
 	{
@@ -58,8 +58,8 @@
 		"name": "Innei 静かな森",
 		"url": "https://innei.in/",
 		"avatar": "https://cdn.jsdelivr.net/gh/Innei/static@master/avatar.png",
-		"description": "网站还行，是典型的那种某个时代的产物，我不太get。但是内容活跃，并且他好像很火？但我没找出他为什么火。项目还是挺多的。",
-		"stars": 3,
+		"description": "Innei 静かな森",
+		"stars": 5,
 		"status": "recent"
 	},
 	{
@@ -106,8 +106,8 @@
 		"name": "阿猫的博客",
 		"url": "https://ameow.xyz/",
 		"avatar": "https://ameow.xyz/upload/favicon.png",
-		"description": "可爱的网站，一直在更新他的猫鱼周刊。",
-		"stars": 3
+		"description": "阿猫的博客",
+		"stars": 5
 	},
 	{
 		"name": "季节记忆",
@@ -137,22 +137,22 @@
 		"name": "猫普的精神世界",
 		"avatar": "https://maplezz.com/_astro/picture.DavLO-HP_1hhoaS.webp",
 		"url": "https://maplezz.com/",
-		"description": "通过 issue 发现的另外一个开源的，也是这几天开源的，好巧。液态玻璃感设计，是有这种感觉，挺好的，就是有的花。我还是挺喜欢的。内容从 25年开始。",
-		"stars": 3
+		"description": "猫普的精神世界",
+		"stars": 5
 	},
 	{
 		"name": "十玖八柒",
 		"avatar": "https://ahzoo.cn/img/avatar.webp",
 		"url": "https://blog.ahzoo.cn/",
-		"description": "Z次元，后端开发，记录了很多后端研究。但折腾前端和 blog 还不少。把 blog 打理得有自己独特得舒适，实属难得",
-		"stars": 3
+		"description": "十玖八柒",
+		"stars": 5
 	},
 	{
 		"name": "纸鹿摸鱼处",
 		"avatar": "https://weavatar.com/avatar/47c0f2e82b76d9b10eb3023df9e02e4e3fdbeaf5b74b842063f207971e7fbe7b?s=160",
 		"url": "https://blog.zhilu.site/",
-		"description": "棒棒的开源 blog 主，今天蹭了蹭他群友，🤣，给他多加一分🤣🤣🤣。",
-		"stars": 4
+		"description": "纸鹿摸鱼处",
+		"stars": 5
 	},
 	{
 		"name": "灯火不休时",
