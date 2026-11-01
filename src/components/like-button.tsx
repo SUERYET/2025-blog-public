@@ -69,7 +69,8 @@ export default function LikeButton({ slug = '', delay, className }: LikeButtonPr
 			const url = `${ENDPOINT}?slug=${encodeURIComponent(slug)}`
 			const res = await fetch(url, { method: 'POST' })
 			const data = await res.json().catch(() => ({}))
-			if (data.reason == 'rate_limited') toast('谢谢啦😘，今天已经不能再点赞啦💕')
+			// 用 class 而不是内联色值：深色下要换一个更亮的湖水蓝，内联样式没法跟着主题变
+			if (data.reason == 'rate_limited') toast('谢谢啦😘，今天已经不能再点赞啦💕', { className: 'toast-lake' })
 			const value = typeof data?.count === 'number' ? data.count : (fetchedCount ?? 0) + 1
 			await mutate(value, { revalidate: false })
 		} catch {

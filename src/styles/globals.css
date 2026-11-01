@@ -104,7 +104,22 @@
 	/* Sonner Toaster styles */
 	html li[data-sonner-toast][data-styled='true'] {
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-		@apply bg-surface/40! backdrop-blur;
+		/* 原来用 bg-surface/40：深色下 surface 只有 6% 白，再乘 40% 几乎全透明，
+		   文字压在背景上看不清。改用不透明的 elevated。 */
+		@apply bg-elevated/90! backdrop-blur;
+	}
+
+	/* 点赞限流那句提示：统一湖水蓝，深浅两套各用一个可读的明度 */
+	.toast-lake,
+	.toast-lake [data-title],
+	.toast-lake [data-description] {
+		color: #0e7490 !important;
+	}
+
+	html[data-theme='dark'] .toast-lake,
+	html[data-theme='dark'] .toast-lake [data-title],
+	html[data-theme='dark'] .toast-lake [data-description] {
+		color: #22d3ee !important;
 	}
 }
 
