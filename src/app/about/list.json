@@ -1,5 +1,5 @@
 {
 	"title": "关于我",
 	"description": "SUERYETO · 计算机专业在读 · 写代码，也写点笔记",
-	"content": "你好，我是 **SUERYETO**，计算机专业在读。\n\n日常是在算法和数据结构的坑里打转——蓝桥杯、Java、DFS 与各类递推，偶尔也折腾前端和这个站点本身。这个博客是我给自己留的一块地：想明白的事记下来，没想明白的也先记下来。\n\n## 我在做什么\n\n- **算法**：蓝桥杯 Java B 组备考系列，DFS / BFS / 前缀和 / 差分数组这些**模板级**的东西\n- **前端**：这个站点，Next.js + Tailwind，从设计到提交全流程\n- **记录**：读书、踩坑、以及那些\"当时觉得很重要后来忘了\"的念头\n\n## 这个站点\n\n内容全部存在 Github 仓库里，没有数据库也没有服务端后台。写文章就是往仓库提交一次 commit，页面靠重新部署更新——**内容、代码、版本历史都在你自己手里**。\n\n你可以直接点右上角的「编辑」试试，提交时需要 Owner 的 Private Key。\n\n## 技术栈\n\n- Next.js / React / TypeScript\n- Tailwind CSS v4 / Motion\n- Shiki 代码高亮 / KaTeX 公式\n- Github API（Git Data API 批量提交）"
+	"content": "## 我在做什么\n\n## 这个站点\n\n## 技术栈\n"
 }

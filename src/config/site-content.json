@@ -33,7 +33,7 @@
 		},
 		{
 			"id": "f495779fddae07a6",
-			"url": "/images/art/f495779fddae07a6.png"
+			"url": "/images/art/f495779fddae07a6.webp"
 		},
 		{
 			"id": "65ce15c09e69bd71",
@@ -45,7 +45,7 @@
 		},
 		{
 			"id": "34d9a15f3a52b70d",
-			"url": "/images/art/34d9a15f3a52b70d.png"
+			"url": "/images/art/34d9a15f3a52b70d.webp"
 		}
 	],
 	"currentArtImageId": "65ce15c09e69bd71",
@@ -56,7 +56,7 @@
 		},
 		{
 			"id": "f495779fddae07a6",
-			"url": "/images/background/f495779fddae07a6.png"
+			"url": "/images/background/f495779fddae07a6.webp"
 		},
 		{
 			"id": "65ce15c09e69bd71",
@@ -64,7 +64,7 @@
 		},
 		{
 			"id": "34d9a15f3a52b70d",
-			"url": "/images/background/34d9a15f3a52b70d.png"
+			"url": "/images/background/34d9a15f3a52b70d.webp"
 		}
 	],
 	"currentBackgroundImageId": "f495779fddae07a6",
@@ -107,7 +107,7 @@
 	"hatFlipped": false,
 	"enableChristmas": false,
 	"beian": {
-		"text": "",
-		"link": ""
+		"text": "萌ICP备20262500号",
+		"link": "https://icp.gov.moe/?keyword=20262500"
 	}
 }

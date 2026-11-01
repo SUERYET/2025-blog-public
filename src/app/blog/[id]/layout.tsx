@@ -16,7 +16,7 @@ import siteContent from '@/config/site-content.json'
  */
 const posts = publicPosts(blogIndex as BlogIndexItem[])
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.yysuni.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.sueryeto.cn'
 
 function absoluteUrl(path: string) {
 	if (/^https?:\/\//.test(path)) return path

@@ -6,7 +6,7 @@ import blogIndex from '@/../public/blogs/index.json'
 import type { BlogIndexItem } from '@/app/blog/types'
 import { publicPosts } from '@/lib/blog-visibility'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.yysuni.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.sueryeto.cn'
 const FEED_PATH = '/rss.xml'
 const SITE_ORIGIN = SITE_URL.replace(/\/$/, '')
 const FEED_URL = `${SITE_ORIGIN}${FEED_PATH}`

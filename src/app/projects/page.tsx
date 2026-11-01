@@ -39,12 +39,19 @@ export default function Page() {
 		setIsCreateDialogOpen(true)
 	}
 
-	const handleSaveProject = (updatedProject: Project) => {
+	const handleSaveProject = (updatedProject: Project, imageItem?: ImageItem) => {
 		if (editingProject) {
 			const updated = projects.map(p => (p.url === editingProject.url ? updatedProject : p))
 			setProjects(updated)
+			// 换过封面就要登记，否则 pushProjects 不会上传这张图
+			if (imageItem) {
+				setImageItems(prev => new Map(prev).set(updatedProject.url, imageItem))
+			}
 		} else {
 			setProjects([...projects, updatedProject])
+			if (imageItem) {
+				setImageItems(prev => new Map(prev).set(updatedProject.url, imageItem))
+			}
 		}
 	}
 
@@ -102,6 +109,13 @@ export default function Page() {
 					{projects.map((project, index) => (
 						<ProjectCard key={project.url} project={project} isEditMode={isEditMode} onUpdate={handleUpdate} onDelete={() => handleDelete(project)} />
 					))}
+
+					{projects.length === 0 && (
+						<div className='border-hair text-muted col-span-full rounded-[20px] border border-dashed py-20 text-center'>
+							<p className='text-ink mb-1.5 text-[15px] font-medium'>还没有项目</p>
+							<p className='text-[13px]'>点右上角「编辑」→「添加」，填名称、地址、一句话介绍就能上线</p>
+						</div>
+					)}
 				</div>
 			</div>
 

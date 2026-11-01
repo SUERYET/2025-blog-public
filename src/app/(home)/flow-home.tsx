@@ -13,6 +13,9 @@ import { PostRow, PostTags, formatPostDate } from '@/components/post-row'
 
 const ALL = 'all'
 
+/** 最新一篇没有配封面时用它兜底 */
+const DEFAULT_COVER = '/images/default-cover.webp'
+
 function FeaturedPost({ item }: { item: BlogIndexItem }) {
 	const { day, year } = formatPostDate(item.date)
 
@@ -34,17 +37,13 @@ function FeaturedPost({ item }: { item: BlogIndexItem }) {
 			</div>
 
 			<div className='bg-surface2 relative aspect-16/10 overflow-hidden md:aspect-auto md:min-h-[240px]'>
-				{item.cover ? (
-					<img
-						src={item.cover}
-						alt=''
-						loading='lazy'
-						decoding='async'
-						className='absolute inset-0 size-full object-cover transition-transform duration-500 ease-[var(--ease)] group-hover:scale-[1.04]'
-					/>
-				) : (
-					<div className='from-brand/15 to-brand-2/10 absolute inset-0 bg-gradient-to-br' />
-				)}
+				<img
+					src={item.cover || DEFAULT_COVER}
+					alt=''
+					loading='lazy'
+					decoding='async'
+					className='absolute inset-0 size-full object-cover transition-transform duration-500 ease-[var(--ease)] group-hover:scale-[1.04]'
+				/>
 			</div>
 		</Link>
 	)
@@ -70,7 +69,8 @@ export function FlowHome() {
 
 	const { featured, rest, counts } = useMemo(() => {
 		const sorted = [...items].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-		const first = sorted.find(item => item.cover) ?? sorted[0]
+		// 严格取最新一篇；没封面时由 DEFAULT_COVER 兜底，不再退回旧文章
+		const first = sorted[0]
 		const remaining = sorted.filter(item => item.slug !== first?.slug)
 
 		const counts = new Map<string, number>()
@@ -89,7 +89,15 @@ export function FlowHome() {
 		return ordered.filter(value => (counts.get(value) ?? 0) > 0)
 	}, [items, categories, counts])
 
-	const visible = active === ALL ? rest : rest.filter(item => (item.category?.trim() || '未分类') === active)
+	/**
+	 * 首页最多放几条归档。文章多了以后不设上限会把首页拉得很长，
+	 * 而且「精选」已经在最上面占了一大块。想看全部去 /blog。
+	 */
+	const HOME_POST_LIMIT = 8
+
+	const filtered = active === ALL ? rest : rest.filter(item => (item.category?.trim() || '未分类') === active)
+	const visible = filtered.slice(0, HOME_POST_LIMIT)
+	const truncated = filtered.length > visible.length
 
 	/**
 	 * 首页顶部的联系方式，直接读 site-content.json 里配置好的社交按钮 ——
@@ -177,10 +185,10 @@ export function FlowHome() {
 					</div>
 				</section>
 
-				{/* 精选 */}
+				{/* 最新 */}
 				{featured && (
 					<section className='mb-14'>
-						<SectionHead title='精选' />
+						<SectionHead title='最新' />
 						<FeaturedPost item={featured} />
 					</section>
 				)}
@@ -219,7 +227,7 @@ export function FlowHome() {
 						<Link
 							href='/blog'
 							className='text-brand-ink mt-7 inline-flex items-center gap-1.5 text-[14px] font-medium'>
-							查看全部 {items.length} 篇
+							{truncated ? `查看全部 ${items.length} 篇（还有 ${filtered.length - visible.length} 篇）` : `查看全部 ${items.length} 篇`}
 							<ArrowRight className='size-4 transition-transform duration-150 hover:translate-x-0.5' aria-hidden />
 						</Link>
 					)}

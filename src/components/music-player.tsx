@@ -87,7 +87,9 @@ export function MusicPlayer() {
 	const step = (delta: number) => start((index + delta + TRACKS.length) % TRACKS.length)
 
 	return (
-		<div className='fixed top-[76px] right-4 z-40 max-md:hidden sm:right-6'>
+		// top 124px：让开页面右上角的「编辑」工具条（它在 78px，高约 36px），
+		// 两者都固定在右侧，贴太近会互相盖住
+		<div className='fixed top-[124px] right-4 z-40 max-md:hidden sm:right-6'>
 			<audio ref={audioRef} preload='none' />
 
 			<div className='border-hair bg-[var(--glass)] overflow-hidden rounded-full border shadow-[var(--shadow-md)] backdrop-blur-xl'>

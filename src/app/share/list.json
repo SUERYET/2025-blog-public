@@ -214,16 +214,6 @@
 		"stars": 3
 	},
 	{
-		"name": "Webp 转换压缩",
-		"logo": "https://www.yysuni.com/images/avatar.png",
-		"url": "https://www.yysuni.com/image-toolbox",
-		"description": "无限压缩，快且方便，可以直接对比效果",
-		"tags": [
-			"图片"
-		],
-		"stars": 3
-	},
-	{
 		"name": "WoraWork",
 		"logo": "https://worawork.vercel.app/Icons/worawork.webp",
 		"url": "https://worawork.vercel.app/",

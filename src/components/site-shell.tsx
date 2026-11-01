@@ -49,9 +49,7 @@ const MORE_ITEMS = [
 	{ href: '/pictures', label: '图集', hint: 'pictures' },
 	{ href: '/image-toolbox', label: '图片工具箱', hint: 'toolbox' },
 	{ href: '/clock', label: '时钟', hint: 'clock' },
-	{ href: '/svgs', label: '图标库', hint: 'svgs' },
-	{ href: '/live2d', label: 'Live2D', hint: 'live2d' },
-	{ href: '/wuthering-waves', label: '鸣潮抽卡', hint: 'wuwa' }
+	{ href: '/svgs', label: '图标库', hint: 'svgs' }
 ]
 
 const MOBILE_ONLY_ICONS: Record<string, typeof Clock> = {
@@ -273,8 +271,21 @@ export function SiteFooter() {
 	return (
 		<footer className='border-hair mt-20 border-t'>
 			<Container className='text-faint flex flex-wrap items-center justify-between gap-4 py-9 text-[13px]'>
-				<div>
-					© {new Date().getFullYear()} {siteContent.meta.username}
+				<div className='flex flex-wrap items-center gap-x-2 gap-y-1'>
+					<span>
+						© {new Date().getFullYear()} {siteContent.meta.username}
+					</span>
+					<span aria-hidden className='text-hair2'>
+						·
+					</span>
+					{/* 萌国 ICP 备案，按要求放在页脚 */}
+					<a
+						href='https://icp.gov.moe/?keyword=20262500'
+						target='_blank'
+						rel='noreferrer'
+						className='hover:text-brand-ink transition-colors'>
+						萌ICP备20262500号
+					</a>
 				</div>
 
 				<div className='flex flex-wrap items-center gap-5'>

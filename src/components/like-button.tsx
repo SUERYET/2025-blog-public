@@ -13,10 +13,12 @@ type LikeButtonProps = {
 	delay?: number
 }
 
-const ENDPOINT = 'https://blog-liker.yysuni1001.workers.dev/api/like'
+/** 点赞服务地址。换部署时用 NEXT_PUBLIC_LIKE_ENDPOINT 覆盖即可，不用改代码。 */
+const ENDPOINT = process.env.NEXT_PUBLIC_LIKE_ENDPOINT || 'https://blog-liker.2658693309.workers.dev/api/like'
 
-export default function LikeButton({ slug = 'yysuni', delay, className }: LikeButtonProps) {
-	slug = BLOG_SLUG_KEY + slug
+export default function LikeButton({ slug = '', delay, className }: LikeButtonProps) {
+	// 没有 slug 就不渲染，避免把点赞记到一个叫 undefined 的键上
+	slug = slug ? BLOG_SLUG_KEY + slug : ''
 	const [liked, setLiked] = useState(false)
 	const [show, setShow] = useState(false)
 	const [justLiked, setJustLiked] = useState(false)
