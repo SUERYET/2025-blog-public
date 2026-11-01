@@ -161,5 +161,12 @@
 		"description": "群友，JAVAR，干净blog，让我看到几个人的影子。",
 		"stars": 3,
 		"status": "disconnected"
+	},
+	{
+		"name": "妹控の小站",
+		"avatar": "https://www.szyzbg.com/wp-content/uploads/2025/12/eva06d_16_sq.jpg",
+		"url": "https://www.szyzbg.com/",
+		"description": "妹控の小站",
+		"stars": 5
 	}
 ]
