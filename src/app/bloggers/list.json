@@ -15,20 +15,6 @@
 		"status": "disconnected"
 	},
 	{
-		"name": "Josh W. Comeau",
-		"url": "https://www.joshwcomeau.com/",
-		"avatar": "https://www.joshwcomeau.com/favicon.png",
-		"description": "John blog 更像是一个课程网站，每一篇文章都书写的很好，每次阅读都能吸收到新的东西。网站设计也恰到好处，工整、有趣。",
-		"stars": 5
-	},
-	{
-		"name": "nanda",
-		"url": "https://www.nan.fyi/",
-		"avatar": "https://www.nan.fyi/favicon.ico",
-		"description": "设计大师，nanda 。页面只用灰色加线条，都让我觉得叹为观止，内容不多，每篇都精雕细琢。跟 Josh 一样，属于技术网站，但它的教程引导更加出神入化，可称为程序艺术家。",
-		"stars": 5
-	},
-	{
 		"name": "Emil Kowalski",
 		"url": "https://emilkowal.ski/",
 		"avatar": "https://emilkowal.ski/favicon.ico",
@@ -69,18 +55,12 @@
 		"status": "disconnected"
 	},
 	{
-		"name": "enpitsulin 铅笔",
-		"url": "https://enpitsulin.xyz/",
-		"avatar": "https://enpitsulin.dev/images/avatar.webp",
-		"description": "很简洁的blog网站，像 nanda。只不过很久没内容了。他现在的头像一时让我想不起他是谁了，突然发现它过去可爱头像，我想起来这家伙了。",
-		"stars": 2
-	},
-	{
 		"name": "Innei 静かな森",
 		"url": "https://innei.in/",
 		"avatar": "https://cdn.jsdelivr.net/gh/Innei/static@master/avatar.png",
 		"description": "网站还行，是典型的那种某个时代的产物，我不太get。但是内容活跃，并且他好像很火？但我没找出他为什么火。项目还是挺多的。",
-		"stars": 3
+		"stars": 3,
+		"status": "recent"
 	},
 	{
 		"name": "秋夜灯雨",
@@ -91,33 +71,12 @@
 		"status": "disconnected"
 	},
 	{
-		"name": "BlogFinder",
-		"url": "https://bf.zzxworld.com/",
-		"avatar": "https://bf.zzxworld.com/images/favicon.png",
-		"description": "一个 blog 收集网站，可以查阅有哪些 blog，也可以直接看最近谁更新了什么",
-		"stars": 3
-	},
-	{
-		"name": "Tonsky",
-		"url": "https://tonsky.me/",
-		"avatar": "https://avatars.githubusercontent.com/u/285292?v=4",
-		"description": "一个过去的国外大神，忘了是什么时候发现它的，blog 依旧时不时更新。就是现在 blog 太刺眼了，不知道是不是故意的。",
-		"stars": 3
-	},
-	{
 		"name": "Cali",
 		"url": "https://cali.so/",
 		"avatar": "https://cali.so/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FPortrait.8d12f14a.png&w=96&q=75",
 		"description": "设计师，网站设计不错，但是 blog 内容很少。但厉害的是他已经自己开公司了，给别人设计网站，影石 Insta360 是他们设计的。很好的 blog 参考。他的 zolplay 网站跟 nanda 风格很像，不知道谁抄的谁。",
 		"stars": 4,
 		"status": "disconnected"
-	},
-	{
-		"name": "Chrome Blog",
-		"url": "https://web.dev/blog?hl=zh-cn",
-		"avatar": "/images/blogger/2fe46db88bd43683.svg",
-		"description": "技术团队 blog，咨询、动态、故事。我觉得页面感受还不错。",
-		"stars": 4
 	},
 	{
 		"name": "Huozhi",
@@ -128,26 +87,12 @@
 		"status": "disconnected"
 	},
 	{
-		"name": "Brian Lovin",
-		"url": "https://brianlovin.com/",
-		"avatar": "https://avatars.githubusercontent.com/u/1923260?v=4",
-		"description": "早期外国大神，在 Github,Facebook 工作过，现在在notion，资历老、项目多。blog 写成了 Dashboard 风格，蛮奇特的，但是 blog 并不多。",
-		"stars": 4
-	},
-	{
 		"name": "Cassie Evans's Blog",
 		"url": "https://www.cassie.codes/",
 		"avatar": "https://www.cassie.codes/images/avatar2.jpg",
 		"description": "彩色网站，真的很酷。并且还是位女士，真的很少见。GASP、SVG、动画很精美，但是没几篇内容，也算是高级 blog 的一种诅咒。在 Twitter 上也是名人。",
 		"stars": 4,
 		"status": "disconnected"
-	},
-	{
-		"name": "Niracler 的博物志",
-		"url": "https://niracler.com/",
-		"avatar": "https://niracler.com/favicon.svg",
-		"description": "小透明，偶尔更新一篇blog。但是网站风格还是有特点的，可作为设计 blog 时的参考。",
-		"stars": 2
 	},
 	{
 		"name": "講評世界",
@@ -165,33 +110,12 @@
 		"stars": 3
 	},
 	{
-		"name": "pseudoyu",
-		"url": "https://www.pseudoyu.com/",
-		"avatar": "https://www.pseudoyu.com/avatar.webp",
-		"description": "区块链开发者，在 Monad 区块链倒腾了一段时间。网站长得跟 Anthony 一模一样。嘴上一直念叨着他的学姐老婆。应该也挺厉害的。",
-		"stars": 3
-	},
-	{
 		"name": "季节记忆",
 		"avatar": "https://www.seamory.com/api/storage/2024112814523200000001349b3aa3c2",
 		"url": "https://www.seamory.com/",
 		"description": "好像是为后端/嵌入式？2025 年初建立的 blog，无 UI 设计。但少有后端人显露 blog，应当勉励的。",
 		"stars": 1,
 		"status": "disconnected"
-	},
-	{
-		"name": "微尔微",
-		"avatar": "https://www.vio.vin/apple-touch-icon.png",
-		"url": "https://www.vio.vin/",
-		"description": "23 年新晋散修，如他所说，一天倒腾一些奇怪的东西。应该是以后端为主，喜欢完一些硬件。静森系 blog，25年 blog 稳定输出。",
-		"stars": 2
-	},
-	{
-		"name": "搬砖日记",
-		"avatar": "https://banzhuanriji.com/img/icon.ico",
-		"url": "https://banzhuanriji.com/",
-		"description": "白底黑字。但是打理得挺好的。应该是 Andriod 开发者，24 年开始分享各种探索。摸不清根底。",
-		"stars": 2
 	},
 	{
 		"name": "博客.cn",
@@ -217,27 +141,6 @@
 		"stars": 3
 	},
 	{
-		"name": "手里有只毛毛虫",
-		"avatar": "https://www.krjojo.com/wp-content/uploads/2024/05/avatar.avif",
-		"url": "https://www.krjojo.com/",
-		"description": "网站很舒服，一位六边形战士的独立开发者。文章目录能一眼看完就好了，想翻点想看的比较不容易。",
-		"stars": 4
-	},
-	{
-		"name": "Honesty",
-		"avatar": "https://cdn.jsdelivr.net/gh/listener-He/images@default/202309111525908.jpeg",
-		"url": "https://blog.hehouhui.cn/",
-		"description": "折腾 blog 的后端，是个后端学习的榜样，折腾了这么多年。网站弄得还挺好的，就是加载内容有点慢。",
-		"stars": 3
-	},
-	{
-		"name": "ElysiumStack",
-		"avatar": "https://www.elysium-stack.cn/upload/b4136969-e1a1-44b9-833f-36e54392f018.png",
-		"url": "https://www.elysium-stack.cn/",
-		"description": "UI 设计师 blogger，少见，blog 设计的很棒。一股游戏感铺面而来，25 年开始的内容。",
-		"stars": 3
-	},
-	{
 		"name": "十玖八柒",
 		"avatar": "https://ahzoo.cn/img/avatar.webp",
 		"url": "https://blog.ahzoo.cn/",
@@ -258,19 +161,5 @@
 		"description": "群友，JAVAR，干净blog，让我看到几个人的影子。",
 		"stars": 3,
 		"status": "disconnected"
-	},
-	{
-		"name": "23朵毒蘑菇",
-		"avatar": "https://blog.dumogu.top/web-assets/v-last/public/user.jpg",
-		"url": "https://blog.dumogu.top/",
-		"description": "前端开发，页面小巧，结构简单，寻常记录",
-		"stars": 3
-	},
-	{
-		"name": "Amis",
-		"avatar": "https://amisblog.cn/images/avatar.png",
-		"url": "https://amisblog.cn/",
-		"description": "Amis",
-		"stars": 5
 	}
 ]
