@@ -28,7 +28,7 @@ export function WritePreview({ form, coverPreviewUrl, onClose, slug }: WritePrev
 				animate={{ opacity: 1, scale: 1 }}
 				whileHover={{ scale: 1.05 }}
 				whileTap={{ scale: 0.95 }}
-				className='absolute top-4 right-6 rounded-xl border bg-surface/60 px-6 py-2 text-sm'
+				className='border-hair bg-surface/90 hover:bg-surface fixed top-[76px] right-4 z-30 rounded-xl border px-6 py-2 text-sm backdrop-blur sm:right-6'
 				onClick={onClose}>
 				关闭预览
 			</motion.button>

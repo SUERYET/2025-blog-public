@@ -81,7 +81,8 @@ export function WriteActions() {
 			/>
 			<input ref={mdInputRef} type='file' accept='.md' className='hidden' onChange={handleMdFileChange} />
 
-			<ul className='absolute top-4 right-6 flex items-center gap-2'>
+			{/* 固定在顶栏（64px）下方：用 absolute top-4 会被 sticky header 压住，按钮看不见 */}
+			<ul className='fixed top-[76px] right-4 z-30 flex flex-wrap items-center justify-end gap-2 sm:right-6'>
 				{mode === 'edit' && (
 					<>
 						<motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className='flex items-center gap-2'>
