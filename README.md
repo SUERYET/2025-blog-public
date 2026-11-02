@@ -1,164 +1,151 @@
-# 2025 Blog
+# SUERYETO's Blog
 
-> 最新引导说明：https://www.yysuni.com/blog/readme
+个人博客。文章、配置、图片全部存在这个 Git 仓库里，没有数据库、没有后端服务。
+写作是在浏览器里完成的：打开站内编辑页 → 导入 GitHub App 的私钥 → 提交一次 commit → 等重新部署。
 
-该项目使用 Github App 管理项目内容，请保管好后续创建的 **Private key**，不要上传到公开网上。
+线上地址：<https://www.sueryeto.cn>
 
-## 1. 安装
+---
 
-使用该项目可以先不做本地开发，直接部署然后配置环境变量。具体变量名请看下列大写变量
+## 技术栈
 
-```ts
-export const GITHUB_CONFIG = {
-	OWNER: process.env.NEXT_PUBLIC_GITHUB_OWNER || 'yysuni',
-	REPO: process.env.NEXT_PUBLIC_GITHUB_REPO || '2025-blog-public',
-	BRANCH: process.env.NEXT_PUBLIC_GITHUB_BRANCH || 'main',
-	APP_ID: process.env.NEXT_PUBLIC_GITHUB_APP_ID || '-'
-} as const
+| 层 | 选型 |
+|---|---|
+| 框架 | Next.js 16（App Router / Turbopack）、React 19、TypeScript |
+| 样式 | Tailwind CSS v4（`@theme` + `@utility`，无 `tailwind.config`） |
+| 状态 | Zustand（UI 状态）、SWR（数据拉取） |
+| 动效 | motion |
+| 正文渲染 | marked → shiki（代码高亮）→ katex（公式）→ mermaid（图表） |
+| 写入 | jsrsasign 在浏览器签发 JWT → GitHub App → Git Data API |
+| 部署 | Vercel（主）/ Cloudflare Workers + OpenNext（备） |
+
+## 本地运行
+
+```bash
+pnpm install
+pnpm dev          # http://localhost:2025
 ```
 
-也可以自己手动先调整安装，可自行 `pnpm i`
+| 脚本 | 作用 |
+|---|---|
+| `pnpm dev` | 开发服务器，端口 **2025** |
+| `pnpm build` | 生产构建 |
+| `pnpm start` | 启动生产构建 |
+| `pnpm svg` | 扫描 `src/svgs/` 重新生成图标索引，并监听变化 |
+| `pnpm build:cf` / `preview` / `deploy` | Cloudflare Workers 构建 / 预览 / 部署 |
 
-## 2. 部署
+> `pnpm dev` 和 `pnpm build` 共用 `.next` 目录，**不能同时跑**。遇到奇怪的编译错误先确认没有第二个 dev 进程，再删 `.next` 重来。
 
-我这里熟悉 Vercel 部署，就以 Vercel 部署为例子。创建 Project => Import 这个项目
+## 内容结构
 
-![](https://www.yysuni.com/blogs/readme/730266f17fab9717.png)
-
-无需配置，直接点部署
-
-![](https://www.yysuni.com/blogs/readme/95dee9a69154d0d0.png)
-
-大约 60 秒会部署完成，有一个直接 vercel 域名，如：https://2025-blog-public.vercel.app/
-
-到这里部署网站已经完成了，下一步创建 Github App
-
-## 3. 创建 Github App 链接仓库
-
-在 github 个人设置里面，找到最下面的 Developer Settings ，点击进入
-
-![](https://www.yysuni.com/blogs/readme/0abb3b592cbedad6.png)
-
-进入开发者页面，点击 **New Github App**
-
-*GitHub App name* 和 *Homepage URL* , 输入什么都不影响。Webhook 也关闭，不需要。
-
-![](https://www.yysuni.com/blogs/readme/71dcd9cf8ec967c0.png)
-
-只需要注意设置一个仓库 write 权限，其它不用。
-
-![](https://www.yysuni.com/blogs/readme/2be290016e56cd34.png)
-
-点击创建，谁能安装这个仓库这个选择无所谓。直接创建。
-
-![](https://www.yysuni.com/blogs/readme/aa002e6805ab2d65.png)
-
-
-### 创建密钥
-
-创建好 Github App 后会提示必须创建一个 **Private Key**，直接创建，会自动下载（不见了也不要紧，后面自己再创建再下载就行）。页面上有个 **App ID** 需要复制一下
-
-再切换到安装页面
-
-![](https://www.yysuni.com/blogs/readme/c122b1585bb7a46a.png)
-
-这里一定要只**授权当前项目**。
-
-![](https://www.yysuni.com/blogs/readme/2cf1cee3b04326f1.png)
-
-点击安装，就完成了 Github App 管理该仓库的权限设置了。下一步就是让前端知道推送那个项目，就是最开始提到的环境变量。（如果你不会设置环境变量，直接改仓库文件 `src/consts.ts` 也行。因为是公开的，所以环境变量意义也不大）
-
-直接输入这几个环境变量值就行，一般只用设置 OWNER 和 APP_ID。其它配置不用管，直接输入创建就行。
-
-![](https://www.yysuni.com/blogs/readme/c5a049d737848abf.png)
-
-设置完成后，需要手动再部署一次，让环境变量生效。
-* 可以直接 push 一次仓库代码会触发部署
-* 也可以手动选择创建一次部署
-![](https://www.yysuni.com/blogs/readme/59a802ed8d1c3a13.png)
-
-## 4. 完成
-
-现在，部署的这个网站就可以开始使用前端改内容了。比如更改一个分享内容。
-
-**提示**，网站前端页面删改完提示成功之后，你需要等待后台的部署完成，再刷新页面才能完成服务器内容的更新哦。
-
-## 5. 删除
-
-使用这个项目应该第一件事需要删除我的 blog，单独删除，批量删除已完成。
-
-## 6. 配置
-
-大部分页面右上角都会有一个编辑按钮，意味着你可以使用 **private key** 进行配置部署。
-
-### 6.1 网站配置
-
-首页有一个不显眼的配置按钮，点击就能看到现在可以配置的内容。
-
-![](https://www.yysuni.com/blogs/readme/cddb4710e08a5069.png)
-
-## 7. 写 blog
-
-写 blog 的图片管理，可能会有疑惑。图片管理推荐逻辑是先点击 **+ 号** 添加图片，（推荐先压缩好，尺寸推荐宽度不超过 1200）。然后将上传好的图片直接拖入文案编辑区，这就已经添加好了，点击右上角预览就可以看到效果。
-
-## 8. 写给非前端
-
-非前端配置内容，还是需要一个文件指引。下面写一些更细致的代码配置。
-
-### 8.1 移除 Liquid Grass
-
-进入 `src/layout/index.tsx` 文件，删除两行代码，然后提交代码到你的 github
-```tsx
-const LiquidGrass = dynamic(() => import('@/components/liquid-grass'), { ssr: false })
-// 中间省略...
-<LiquidGrass /> // 第 53 行
+```
+public/blogs/
+├── index.json              ← 文章索引（列表页/首页/RSS/sitemap 都读它）
+├── categories.json         ← 分类列表
+└── <slug>/
+    ├── index.md            ← 正文（Markdown）
+    └── config.json         ← 标题、标签、日期、摘要、封面、分类、hidden
 ```
 
-![](https://www.yysuni.com/blogs/readme/f70ff3fe3a77f193.png)
+其它内容页的数据是各自目录下的 `list.json`：
 
-### 8.2 配置首页内容
+```
+src/app/projects/list.json    项目
+src/app/share/list.json       推荐分享
+src/app/bloggers/list.json    优秀博客
+src/app/pictures/list.json    图集
+src/app/snippets/list.json    一句话
+src/app/about/list.json       关于我
+```
 
-首页的内容现在只能前端配置一部分，所以代码更改在 `src/app/(home)` 目录，这个目录代表首页所有文件。首页的具体文件为  `src/app/(home)/page.tsx`
+站点外观、社交按钮、备案号等配置集中在 `src/config/site-content.json`，
+首页卡片布局在 `src/config/card-styles.json`。
 
- ![](https://www.yysuni.com/blogs/readme/011679cd9bf73602.png)
+## 写作与编辑
 
-这里可以看到有很多 `Card` 文件，需要改那个首页 Card 内容就可以点入那个具体文件修改。
+站内大部分页面右上角有「编辑」按钮（也可以按 `Ctrl + ,`）。
 
-比如中间的内容，为 `HiCard`，点击 `hi-card.tsx` 文件，即可更改其内容。
+1. 点「编辑」进入编辑态
+2. 第一次保存时会要求导入 **Private Key**（GitHub App 的 `.pem`）
+3. 提交后会在仓库产生一次 commit，等平台重新部署完刷新即可看到
 
-![](https://www.yysuni.com/blogs/readme/20b0791d012163ee.png)
+私钥只在浏览器内存里；如果勾选了「缓存密钥」，会用 AES-GCM 加密后存进 `sessionStorage`。
+**不要把这个 `.pem` 文件提交到仓库**（`.gitignore` 已忽略 `*.pem`）。
 
-## 9. 互助群
+### 一次性准备：创建 GitHub App
 
-对于完全不是**程序员**的用户，确实会对于更新代码后，如何同步，如何**合并代码**手足无措。我创建了一个 **QQ群**（加群会简单点），或者 vx 群还是 tg 群会好一点可以 issue 里面说下就行。
+1. GitHub → Settings → Developer settings → **New GitHub App**
+2. 只需要给仓库 **Contents: Read & write** 权限，Webhook 关掉
+3. 创建后下载 **Private Key**，记下 **App ID**
+4. 把 App 安装到你自己的博客仓库（只授权这一个仓库）
 
-QQ 群：[https://qm.qq.com/q/spdpenr4k2](https://qm.qq.com/q/spdpenr4k2)
-> 不好意思，之前的那个qq群ID（1021438316），不知道为啥搜不到😂
+### 正文支持的语法
 
-微信群：刚建好了一个微信群，没有 qq 的可以用这个微信群
-![](https://www.yysuni.com/blogs/readme/343f2c62035b8e23.webp)
+除标准 Markdown 外，还支持：
 
-tg 群：1月1号，才创建的 tg 群 https://t.me/public_blog_2025
+- 代码块（shiki 高亮，深浅色双主题）
+- 数学公式：`$inline$` 与 `$$block$$`（KaTeX）
+- 图表：用 ```` ```mermaid ```` 代码块写 flowchart / sequenceDiagram 等，**只在出现时才加载 mermaid**
 
+## 环境变量
 
-应该主要是我自己亲自帮助你们遇到问题怎么办。（后续看看有没有好心人）
+在部署平台配置；本地可以放 `.env.local`。
 
-希望多多的非程序员加入 blogger 行列，web blog 还是很好玩的，属于自己的 blog 世界。
+| 变量 | 必填 | 默认值 | 作用 |
+|---|---|---|---|
+| `NEXT_PUBLIC_GITHUB_OWNER` | ✅ | `SUERYET` | 目标仓库所有者 |
+| `NEXT_PUBLIC_GITHUB_APP_ID` | ✅ | — | GitHub App 的 App ID，签发 JWT 用 |
+| `NEXT_PUBLIC_GITHUB_REPO` | | `2025-blog-public` | 目标仓库名 |
+| `NEXT_PUBLIC_GITHUB_BRANCH` | | `main` | 提交分支 |
+| `NEXT_PUBLIC_SITE_URL` | 建议 | `https://www.sueryeto.cn` | RSS 链接与文章 canonical |
+| `NEXT_PUBLIC_LIKE_ENDPOINT` | | 自建 Worker 地址 | 点赞接口 |
+| `NEXT_PUBLIC_GITHUB_ENCRYPT_KEY` | | 有内置值 | 缓存私钥时的加密口令，**建议覆盖** |
+| `BLOG_SLUG_KEY` | | 空 | 服务端拼点赞 slug 的前缀 |
 
-游戏资产不一定属于你的，你只有**使用权**，但这个 blog **网站、内容、仓库一定是属于你的**
+> `NEXT_PUBLIC_*` 是**构建期注入**的，改完必须重新构建/部署才生效。
 
-#### 特殊的导航 Card
+### 点赞服务
 
-因为这个 Card 是全局都在的，所以放在了 `src/components` 目录
+点赞数存在自建的 Cloudflare Worker + KV 里（`blog-liker`），不依赖第三方。
+接口约定：
 
-![](https://www.yysuni.com/blogs/readme/9780c38f886322fd.png)
+```
+GET  /api/like?slug=xxx   → { count }
+POST /api/like?slug=xxx   → { count } | { reason: "rate_limited" }
+```
 
-## Star History
+换服务只需改 `NEXT_PUBLIC_LIKE_ENDPOINT`，前端代码不用动。
 
-<a href="https://www.star-history.com/#YYsuni/2025-blog-public&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=YYsuni/2025-blog-public&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=YYsuni/2025-blog-public&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=YYsuni/2025-blog-public&type=date&legend=top-left" />
- </picture>
-</a>
+## 设计系统与文档
+
+- 颜色、圆角、阴影、字体：`src/styles/tokens.css`（三层 token，深浅色靠 `html[data-theme]` 翻转）
+- 通用组件：`src/components/ui/`（Button / IconButton / Segmented / Menu / Container）
+- 页面外壳：`src/components/site-shell.tsx`（顶栏 / 页脚 / 移动端抽屉 / 音乐播放器）
+- 编辑工具条：`src/components/edit-toolbar.tsx`（含完整的私钥导入流程）
+- 统一提交管线：`src/lib/commit.ts`（**全站所有写仓库的操作都走它**）
+
+重构的设计决策、踩过的坑、以及未做的事都记录在：
+`docs/superpowers/specs/2026-10-31-blog-redesign-design.md`
+
+## 部署
+
+### Vercel（当前使用）
+
+导入仓库即可，构建命令 `pnpm build`，无需额外配置。配好上面的环境变量后重新部署一次。
+
+### Cloudflare Workers（备选）
+
+```bash
+pnpm build:cf
+pnpm preview      # 本地预览
+pnpm deploy
+```
+
+`wrangler.toml` 已经配好静态资源绑定（`ASSETS`）与 `nodejs_compat`。
+
+## 说明
+
+- 首页有**两种视图**：文章流（默认）和卡片桌面，右上角切换，选择会记住
+- 文章索引有 `hidden` 字段：标记为隐身的文章不会出现在列表、首页、RSS 和 sitemap，
+  但 `public/blogs/index.json` 本身是公开文件，**不能靠它做真正的私密**
+- `public/` 里的音频与图片建议压缩后再提交（当前约 29 MB）
